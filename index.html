@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC Controls Flashcards — BMS / Data Center Interview Prep</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --panel2: #1c232c;
+    --border: #2a313c;
+    --text: #e6edf3;
+    --muted: #8b96a3;
+    --accent: #ff9900;
+    --accent2: #ffb84d;
+    --green: #3fb950;
+    --red: #f85149;
+    --blue: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  header {
+    padding: 12px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  header h1 .sub {
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  .stats {
+    display: flex;
+    gap: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    align-items: center;
+  }
+  .stats .pill {
+    background: var(--panel2);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .stats .pill.known { color: var(--green); }
+  .stats .pill.need  { color: var(--red); }
+  .stats .pill.left  { color: var(--blue); }
+
+  .controls {
+    padding: 10px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .controls select, .controls button {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  .controls select:hover, .controls button:hover {
+    border-color: var(--accent);
+  }
+  .controls button.primary {
+    background: var(--accent);
+    color: #1a1a1a;
+    font-weight: 600;
+    border-color: var(--accent);
+  }
+  .controls button.primary:hover {
+    background: var(--accent2);
+  }
+  .controls label {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 4px;
+  }
+  .controls label input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  main {
+    flex: 1;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 800px;
+    min-height: 380px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 35px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, transform 0.15s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    user-select: none;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card:active { transform: scale(0.998); }
+  .card .section-tag {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--panel2);
+    padding: 3px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .card .card-side {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+  .card .card-side.q { color: var(--accent); }
+  .card .card-side.a { color: var(--green); }
+  .card .content {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .card .content.answer {
+    font-size: 17px;
+  }
+  .card .tap-hint {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  .card-nav {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .card-nav .nav-left, .card-nav .nav-right {
+    display: flex;
+    gap: 8px;
+  }
+  .card-nav button {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .card-nav button:hover { border-color: var(--accent); }
+  .card-nav button.known {
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .card-nav button.known:hover {
+    background: var(--green);
+    color: #0e1116;
+  }
+  .card-nav button.need {
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .card-nav button.need:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .progress-bar {
+    width: 100%;
+    max-width: 800px;
+    height: 6px;
+    background: var(--panel2);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-bar .seg { height: 100%; transition: width 0.3s; }
+  .progress-bar .seg.known { background: var(--green); }
+  .progress-bar .seg.need { background: var(--red); }
+  .progress-bar .seg.seen { background: var(--blue); opacity: 0.5; }
+
+  .footer-info {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 8px;
+  }
+  .keyboard-hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .keyboard-hint kbd {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: inherit;
+    margin: 0 2px;
+  }
+
+  @media (max-width: 600px) {
+    header { flex-direction: column; align-items: flex-start; }
+    header h1 { font-size: 16px; }
+    .stats { font-size: 12px; gap: 8px; }
+    .controls { padding: 8px 12px; }
+    main { padding: 16px 12px; }
+    .card { padding: 22px 20px; min-height: 320px; }
+    .card .content { font-size: 16px; }
+    .card .content.answer { font-size: 15px; }
+    .card-nav button { padding: 8px 12px; font-size: 13px; }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+  }
+  .empty-state h2 {
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  /* ── Mode toggle ─────────────────────────────────────────── */
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .mode-toggle button {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .mode-toggle button:hover {
+    color: var(--text);
+  }
+  .mode-toggle button.active {
+    background: var(--accent);
+    color: #1a1a1a;
+    font-weight: 600;
+  }
+
+  .btn-icon {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+  .ollama-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    padding-left: 4px;
+  }
+  .ollama-status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.2s;
+  }
+  .ollama-status.ok .dot { background: var(--green); }
+  .ollama-status.err .dot { background: var(--red); }
+  .ollama-status.checking .dot {
+    background: var(--accent);
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── Type-mode panel ─────────────────────────────────────── */
+  .type-panel {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .type-panel textarea {
+    width: 100%;
+    min-height: 110px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.15s;
+  }
+  .type-panel textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .type-panel textarea::placeholder {
+    color: var(--muted);
+  }
+  .type-panel .type-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .type-panel .type-actions .grow { flex: 1; }
+  .type-panel .type-actions .hint {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .btn-grade {
+    background: var(--accent);
+    color: #1a1a1a;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-grade:hover:not(:disabled) {
+    background: var(--accent2);
+  }
+  .btn-grade:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  .grade-result {
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 16px 20px;
+    background: var(--panel);
+    animation: slideDown 0.25s ease-out;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .grade-result.correct {
+    border-left-color: var(--green);
+    background: linear-gradient(90deg, rgba(63,185,80,0.08), transparent);
+  }
+  .grade-result.partial {
+    border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(255,153,0,0.08), transparent);
+  }
+  .grade-result.incorrect {
+    border-left-color: var(--red);
+    background: linear-gradient(90deg, rgba(248,81,73,0.08), transparent);
+  }
+  .grade-result.error {
+    border-left-color: var(--red);
+    background: linear-gradient(90deg, rgba(248,81,73,0.05), transparent);
+  }
+  .grade-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .grade-result.correct .grade-header { color: var(--green); }
+  .grade-result.partial .grade-header { color: var(--accent); }
+  .grade-result.incorrect .grade-header { color: var(--red); }
+  .grade-result.error .grade-header { color: var(--red); }
+  .grade-feedback {
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .grade-missing {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    margin-top: 8px;
+  }
+  .grade-missing strong { color: var(--text); }
+  .reveal-answer {
+    margin-top: 10px;
+  }
+  .reveal-answer summary {
+    cursor: pointer;
+    color: var(--blue);
+    font-size: 13px;
+    user-select: none;
+    padding: 4px 0;
+  }
+  .reveal-answer summary:hover { color: var(--accent); }
+  .reveal-answer .answer-text {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--panel2);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: #1a1a1a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: -3px;
+    margin-right: 6px;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Settings modal ──────────────────────────────────────── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .modal-close {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body {
+    padding: 22px;
+  }
+  .modal-body .row {
+    margin-bottom: 16px;
+  }
+  .modal-body label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .modal-body input[type="text"] {
+    width: 100%;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .modal-body input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .modal-actions {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .setup-help {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .setup-help strong { color: var(--text); }
+  .setup-help code {
+    background: rgba(255,153,0,0.12);
+    color: var(--accent2);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 11px;
+  }
+  .setup-help pre {
+    background: #0a0d11;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: var(--text);
+    overflow-x: auto;
+    margin: 6px 0;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 11px;
+  }
+  .test-result {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 10px;
+    display: none;
+  }
+  .test-result.show { display: block; }
+  .test-result.ok {
+    background: rgba(63,185,80,0.1);
+    color: var(--green);
+    border: 1px solid rgba(63,185,80,0.3);
+  }
+  .test-result.err {
+    background: rgba(248,81,73,0.1);
+    color: var(--red);
+    border: 1px solid rgba(248,81,73,0.3);
+  }
+
+  /* ── Deep Dive button + result ────────────────────────────── */
+  .btn-deep-dive {
+    background: var(--panel2);
+    color: var(--blue);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-deep-dive:hover:not(:disabled) {
+    border-color: var(--blue);
+    background: rgba(88,166,255,0.08);
+  }
+  .btn-deep-dive:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .deep-dive-result {
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 18px 22px;
+    background: linear-gradient(90deg, rgba(88,166,255,0.05), transparent);
+    animation: slideDown 0.25s ease-out;
+    position: relative;
+  }
+  .deep-dive-result.error {
+    border-left-color: var(--red);
+    background: linear-gradient(90deg, rgba(248,81,73,0.05), transparent);
+  }
+  .deep-dive-result .dd-header {
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .deep-dive-result.error .dd-header { color: var(--red); }
+  .deep-dive-result .dd-body {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .deep-dive-result .dd-body h3 {
+    color: var(--accent);
+    font-size: 14px;
+    margin: 16px 0 6px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .deep-dive-result .dd-body h3:first-child { margin-top: 0; }
+  .deep-dive-result .dd-body h4 {
+    color: var(--accent2);
+    font-size: 13px;
+    margin: 12px 0 4px;
+    font-weight: 600;
+  }
+  .deep-dive-result .dd-body strong { color: var(--accent2); }
+  .deep-dive-result .dd-body code {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+  .deep-dive-result .dd-body ul {
+    margin: 4px 0 4px 0;
+    padding-left: 22px;
+  }
+  .deep-dive-result .dd-body li { margin: 3px 0; }
+  .deep-dive-result .dd-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .deep-dive-result .dd-close:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<header>
+  <h1>DC Controls Flashcards <span class="sub">BMS / Data Center Interview Prep</span></h1>
+  <div class="stats">
+    <span class="pill">Card <span id="card-num">0</span> / <span id="card-total">0</span></span>
+    <span class="pill known">✓ <span id="stat-known">0</span></span>
+    <span class="pill need">✗ <span id="stat-need">0</span></span>
+    <span class="pill left">○ <span id="stat-unseen">0</span></span>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="mode-toggle" id="mode-toggle">
+    <button data-mode="flip" class="active">📇 Flip</button>
+    <button data-mode="type">⌨ Type</button>
+  </div>
+  <select id="section-filter">
+    <option value="all">All Sections</option>
+    <option value="ambush">⭐ Ambush Fixes (PUE + Point Types)</option>
+    <option value="vocab">Vocabulary</option>
+    <option value="numbers">Magic Numbers</option>
+    <option value="electrical">Electrical</option>
+    <option value="mechanical">Mechanical / Cooling</option>
+    <option value="controls">Controls (BACnet / Modbus / RS-485)</option>
+    <option value="networking">Networking &amp; IT (TCP/IP, VLANs, OSI)</option>
+    <option value="ops">Operations Language</option>
+    <option value="scenarios">Scenarios</option>
+  </select>
+  <button id="btn-shuffle" class="primary">🔀 Shuffle</button>
+  <button id="btn-sequential">Sequential</button>
+  <label><input type="checkbox" id="only-need"> Only show "need work"</label>
+  <label><input type="checkbox" id="hide-known"> Hide known</label>
+  <span class="ollama-status" id="ollama-status" title="Ollama connection status">
+    <span class="dot"></span><span id="ollama-status-text">Ollama: not checked</span>
+  </span>
+  <button class="btn-icon" id="btn-settings" title="Settings">⚙ Settings</button>
+  <button id="btn-reset" style="margin-left:auto;">Reset progress</button>
+</div>
+
+<div class="progress-bar">
+  <div class="seg known" id="bar-known"></div>
+  <div class="seg need" id="bar-need"></div>
+  <div class="seg seen" id="bar-seen"></div>
+</div>
+
+<main>
+  <div class="card" id="card" onclick="flipCard()">
+    <span class="section-tag" id="section-tag">—</span>
+    <div class="card-side q" id="card-side">QUESTION</div>
+    <div class="content" id="card-content">Loading…</div>
+    <span class="tap-hint">tap to flip</span>
+  </div>
+
+  <div class="card-nav">
+    <div class="nav-left">
+      <button onclick="prevCard()">← Prev</button>
+      <button onclick="flipCard()" id="btn-flip">Flip</button>
+      <button onclick="nextCard()">Next →</button>
+      <button class="btn-deep-dive" onclick="deepDive()" id="btn-deep-dive" title="Get a deeper explanation via your local LLM">🔍 Deep Dive</button>
+    </div>
+    <div class="nav-right">
+      <button class="need" onclick="markCard('need')">✗ Need work</button>
+      <button class="known" onclick="markCard('known')">✓ Known</button>
+    </div>
+  </div>
+
+  <!-- Deep Dive result (appears when user clicks Deep Dive) -->
+  <div id="deep-dive-container" style="width:100%; max-width:800px;"></div>
+
+  <!-- Type mode panel (hidden in flip mode) -->
+  <div class="type-panel" id="type-panel" style="display:none;">
+    <textarea
+      id="user-answer"
+      placeholder="Type your answer here as if you're saying it out loud to the interviewer. The local LLM will grade it and tell you what's missing. Hit Ctrl+Enter to submit."
+      autocomplete="off"
+      spellcheck="false"
+    ></textarea>
+    <div class="type-actions">
+      <button class="btn-grade" id="btn-grade" onclick="gradeAnswer()">Grade Answer</button>
+      <button class="btn-secondary" onclick="skipQuestion()">Skip →</button>
+      <span class="hint grow">Ctrl+Enter to grade · Esc to clear</span>
+    </div>
+  </div>
+
+  <!-- Grade result (appears after grading) -->
+  <div id="grade-result-container" style="width:100%; max-width:800px;"></div>
+</main>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settings-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>⚙ Type-Mode Settings (Ollama)</h2>
+      <button class="modal-close" onclick="closeSettings()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label for="ollama-endpoint">Ollama endpoint</label>
+        <input type="text" id="ollama-endpoint" placeholder="http://localhost:11434">
+      </div>
+      <div class="row">
+        <label for="ollama-model">Model name (must be pulled in Ollama)</label>
+        <input type="text" id="ollama-model" placeholder="llama3.1">
+      </div>
+
+      <div id="test-result" class="test-result"></div>
+
+      <div class="setup-help">
+        <strong>First-time setup on Windows:</strong>
+        <ol style="margin: 8px 0 0 0; padding-left: 18px;">
+          <li>Stop Ollama (right-click the tray icon → Quit Ollama).</li>
+          <li>Open <strong>System Properties → Environment Variables</strong> and add a new user variable: <code>OLLAMA_ORIGINS</code> = <code>*</code> (this lets the browser talk to Ollama from a local HTML file). Restart Ollama after.</li>
+          <li>In PowerShell, pull a model if you haven't: <code>ollama pull llama3.1</code></li>
+          <li>Click <strong>Test connection</strong> below.</li>
+        </ol>
+        <p style="margin: 10px 0 0 0;"><strong>Recommended models for grading:</strong><br>
+        <code>llama3.1</code> (8B, balanced, default) · <code>qwen2.5</code> (strong reasoning) · <code>llama3.2:3b</code> (fast, smaller, less accurate)</p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="testOllamaConnection()">Test connection</button>
+      <button class="btn-grade" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="keyboard-hint">
+  <kbd>Space</kbd> flip · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>K</kbd> known · <kbd>U</kbd> need work · <kbd>S</kbd> shuffle · <kbd>T</kbd> toggle Flip/Type · <kbd>D</kbd> deep dive · <kbd>Ctrl+Enter</kbd> grade typed answer
+</div>
+<div class="footer-info">
+  Progress saved automatically in browser. Open-source on GitHub — PRs welcome to add cards or sections.
+</div>
+
+<script>
+// ============================================================
+// CARD DATA
+// Sections: ambush, vocab, numbers, electrical, mechanical,
+//           controls, ops, scenarios, fit
+// ============================================================
+const cards = [
+  // ── AMBUSH FIXES — Point Types ─────────────────────────────
+  { s: "ambush", q: "What's an AI?", a: "Analog Input. Controller reads a continuous variable signal from a sensor. Typical signals: 4-20 mA current loop, 0-10 VDC, or a resistance value (RTD/thermistor). Example: supply air temperature sensor." },
+  { s: "ambush", q: "What's an AO?", a: "Analog Output. Controller writes a continuous variable signal to a modulating device. Typical signals: 4-20 mA or 0-10 VDC. Example: chilled water valve 0-100%, VFD speed reference, damper actuator." },
+  { s: "ambush", q: "What's a BI?", a: "Binary Input. Controller reads a two-state signal from a field device. Typical signal: dry contact closure (open or closed). Example: fan status from a current switch, filter dP switch, freezestat, smoke detector." },
+  { s: "ambush", q: "What's a BO?", a: "Binary Output. Controller writes a two-state signal to a field device. Typical signal: 24 VDC or relay contact. Example: fan start/stop command, pump enable, lighting relay." },
+  { s: "ambush", q: "What's a UI (Universal Input)?", a: "A controller input channel that can be jumpered or configured to act as AI, BI, or sometimes a direct resistance/temp input. Common on modern controllers like Johnson FECs. Saves panel layout when you don't know the I/O mix ahead of time." },
+  { s: "ambush", q: "What's a UO / configurable output?", a: "Same idea as UI — an output channel that can be configured as AO or BO depending on what you wire to it." },
+  { s: "ambush", q: "What signal levels should you expect on an AI?", a: "4-20 mA (most common in industrial), 0-10 VDC, or a resistance reading for direct-wired temp sensors (thermistor / RTD)." },
+  { s: "ambush", q: "What signal levels should you expect on an AO?", a: "4-20 mA or 0-10 VDC. The actuator/VFD interprets that as a 0-100% command." },
+  { s: "ambush", q: "Why 4-20 mA instead of 0-20 mA?", a: "Live-zero. A reading of 0 mA means broken wire / dead transmitter — not 'zero process value.' 4 mA represents the actual zero. Gives you fault detection for free." },
+  { s: "ambush", q: "What does 'dry contact' mean?", a: "A switch closure with no voltage of its own — the controller supplies the wetting voltage and senses whether the contact is open or closed. Standard input style for BIs." },
+  { s: "ambush", q: "Give me a typical I/O point list for an AHU.", a: "AI: SAT, RAT, MAT, OAT, supply duct static pressure, supply CFM.\nAO: CHW valve, HW valve (if present), supply fan VFD speed, OA damper, RA damper.\nBI: supply fan status, fan VFD fault, filter dP switch, freezestat, smoke detector.\nBO: supply fan start/stop, OA damper enable, alarm output." },
+
+  // ── AMBUSH FIXES — PUE ─────────────────────────────────────
+  { s: "ambush", q: "What is PUE?", a: "Power Usage Effectiveness. PUE = Total Facility Power / IT Equipment Power. Lower is better; 1.0 is the theoretical floor." },
+  { s: "ambush", q: "What's the ideal PUE?", a: "1.0 — every watt going in reaches the IT load. Impossible in practice because cooling, lighting, and electrical losses are always non-zero." },
+  { s: "ambush", q: "What's a good PUE?", a: "Industry average ~1.5-1.6. Hyperscale (AWS, Google, Meta) hits 1.1-1.2. Below 1.1 is exceptional." },
+  { s: "ambush", q: "What raises PUE?", a: "Cooling load (compressors, pumps, fans), lighting, electrical losses (UPS conversion, transformer losses, distribution I²R losses)." },
+  { s: "ambush", q: "What lowers PUE?", a: "Free cooling (air-side or water-side economizer), evaporative cooling, hot/cold aisle containment, higher chilled water temps, higher supply air temps, eco-mode UPS, warmer ASHRAE envelope operation, VFDs everywhere." },
+  { s: "ambush", q: "Why does Umatilla have an advantage on PUE?", a: "High desert eastern Oregon — hot but very dry. Big wet-bulb depression makes evaporative cooling extremely effective, so AWS runs free cooling most of the year instead of mechanical chillers. Drives PUE down hard." },
+  { s: "ambush", q: "What's WUE?", a: "Water Usage Effectiveness — liters of water per kWh of IT load. Trade-off metric with PUE: evap cooling lowers PUE but raises WUE. Hyperscale publishes both." },
+  { s: "ambush", q: "What's CUE?", a: "Carbon Usage Effectiveness — kg CO₂ equivalent per kWh of IT load. Depends on grid mix and on-site renewables." },
+  { s: "ambush", q: "What's ERE?", a: "Energy Reuse Effectiveness. Like PUE but credits heat captured and reused (district heating, adjacent buildings). Common in cold-climate European data centers." },
+  { s: "ambush", q: "If asked 'have you worked with PUE directly' but you haven't:", a: "Be honest. Template: 'I haven't measured PUE at a facility — my background's been [smaller scale / commercial BAS / etc]. But I understand the metric: total facility power over IT load, target 1.1-1.2 for hyperscale. And I know which BMS knobs move it — chilled water setpoints, SAT setpoints, free-cooling utilization, fan/pump VFD efficiency.' Acknowledge the gap, demonstrate the concept." },
+
+  // ── VOCABULARY — Building Systems ──────────────────────────
+  { s: "vocab", q: "What's a BMS?", a: "Building Management System — software platform that monitors and controls a building's HVAC, mechanical, and (sometimes) electrical infrastructure. Operator graphics, alarms, trends, schedules." },
+  { s: "vocab", q: "What's a BAS?", a: "Building Automation System — synonym for BMS. Different vendor preference, same thing." },
+  { s: "vocab", q: "What's an EPMS?", a: "Electrical Power Management System — software platform aggregating real-time data from breakers, meters, UPS, ATS, generators, and switchgear into a single operator view. Electrical-side equivalent of BMS for mechanical." },
+  { s: "vocab", q: "What's an EMS?", a: "Energy Management System — software focused on energy consumption tracking and optimization. Often integrated with BMS data to drive PUE-related decisions." },
+  { s: "vocab", q: "What is SCADA?", a: "Supervisory Control and Data Acquisition — industrial control architecture. Larger sibling of BMS, used in utilities, water plants, manufacturing. Same patterns (supervisor, RTUs/PLCs, HMI) at bigger scale." },
+  { s: "vocab", q: "What is DDC?", a: "Direct Digital Control — older name for what we now call BMS controllers. Replaced pneumatic and electromechanical controls in the 1980s-90s. The term still shows up in older documentation." },
+  { s: "vocab", q: "What's an HMI?", a: "Human-Machine Interface — the operator's screen / graphics view. In a BMS, the supervisor's operator workstation IS the HMI. In SCADA it's a dedicated display." },
+
+  // ── VOCABULARY — Air Handling ──────────────────────────────
+  { s: "vocab", q: "What's an AHU?", a: "Air Handling Unit — fan, cooling coil, heating coil, filters, and dampers in a cabinet. Conditions and moves air to the spaces it serves." },
+  { s: "vocab", q: "What's a CRAH?", a: "Computer Room Air Handler — AHU with a chilled water coil and no compressor. Used in data centers when chilled water is centralized. Most common in hyperscale." },
+  { s: "vocab", q: "What's a CRAC?", a: "Computer Room Air Conditioner — like a CRAH but has its own self-contained DX refrigeration loop and compressor. Common in smaller server rooms where there's no central chilled water plant." },
+  { s: "vocab", q: "What's an FCU?", a: "Fan Coil Unit — smaller, zone-level air handler. Common in hotel rooms, classrooms, and individual spaces. Just a fan and a coil — no return air mixing, no economizer." },
+  { s: "vocab", q: "What's an RTU?", a: "Rooftop Unit — packaged AHU mounted on the roof. Self-contained: includes compressors, condenser, evap coil, fan, and controls in one cabinet. Common in commercial buildings." },
+  { s: "vocab", q: "What's a VAV?", a: "Variable Air Volume — terminal box that throttles airflow to a zone via a damper, sometimes with reheat. Most common zone-control device in commercial HVAC. AHU supplies cool air at constant temp; VAV varies how much each zone gets." },
+  { s: "vocab", q: "What's a DOAS?", a: "Dedicated Outside Air System — separate unit for ventilation air only, decoupled from sensible cooling. Provides minimum OA without entangling it in the cooling system. Increasingly popular." },
+  { s: "vocab", q: "What's an ERV or HRV?", a: "Energy Recovery Ventilator / Heat Recovery Ventilator — recovers heat (ERV also recovers moisture) from exhaust air to precondition incoming OA. Cuts ventilation load substantially in extreme climates." },
+
+  // ── VOCABULARY — Air Temperatures ──────────────────────────
+  { s: "vocab", q: "What's OAT?", a: "Outside Air Temperature — measured at a shaded outdoor sensor (or pulled from a weather feed). Drives economizer decisions and resets." },
+  { s: "vocab", q: "What's RAT?", a: "Return Air Temperature — temperature of air coming back to the AHU from the conditioned space. Indicates the load on the system." },
+  { s: "vocab", q: "What's MAT?", a: "Mixed Air Temperature — measured after OA and RA mix but before the coil. Used in economizer control to verify OA damper modulation is producing the right mixed temp." },
+  { s: "vocab", q: "What's SAT (or DAT)?", a: "Supply Air Temperature / Discharge Air Temperature — air leaving the AHU downstream of the coil. The PV you control with the chilled water valve in a typical AHU cooling loop." },
+  { s: "vocab", q: "What's ZAT?", a: "Zone Air Temperature — temperature in the conditioned space. The process variable for zone-level loops; the VAV or terminal unit modulates to hit zone setpoint." },
+
+  // ── VOCABULARY — Electrical ────────────────────────────────
+  { s: "vocab", q: "What's a UPS?", a: "Uninterruptible Power Supply — provides ride-through during utility loss using batteries. Four components: rectifier (AC→DC), battery, inverter (DC→AC), and static bypass switch. Data centers use double-conversion topology." },
+  { s: "vocab", q: "What's an ATS?", a: "Automatic Transfer Switch — senses utility loss, starts generator, transfers load to generator, transfers back when utility is stable. Open-transition has a brief outage; closed-transition syncs sources for seamless transfer." },
+  { s: "vocab", q: "What's an STS?", a: "Static Transfer Switch — solid-state sub-cycle (4-8 ms) transfer between two synchronized AC sources. Used at the PDU level to feed single-corded loads from a dual-path infrastructure. Faster than ATS." },
+  { s: "vocab", q: "What's a PDU?", a: "Power Distribution Unit — steps voltage down from the UPS feed (typically 480V) to rack distribution voltage (208V or 415V) and distributes via branch breakers to RPPs or racks." },
+  { s: "vocab", q: "What's an RPP?", a: "Remote Power Panel — downstream branch distribution from a PDU. Sits closer to the racks for more granular distribution. Reduces home-run lengths and lets you place breakers near loads." },
+  { s: "vocab", q: "What's a VFD?", a: "Variable Frequency Drive (also called VSD — Variable Speed Drive) — varies a motor's speed by changing the AC frequency feeding it. Major energy saver because fan/pump power scales with the cube of speed." },
+  { s: "vocab", q: "What's an MCC?", a: "Motor Control Center — assembly of motor starters, breakers, and sometimes VFDs in one floor-standing lineup. Centralizes motor control for a building or section." },
+  { s: "vocab", q: "Difference between MV and LV?", a: "Medium Voltage = >1000V, typically 4.16 kV or 13.8 kV class — utility service entrances and inter-substation distribution. Low Voltage = ≤600V — 480V three-phase is the workhorse for commercial/industrial. 208/120V is downstream of building PDUs." },
+  { s: "vocab", q: "What's a PMS in the electrical world?", a: "Power Management System — synonym for EPMS in some vendor stacks (e.g., ABB PMS800). Software for real-time monitoring and control of the electrical infrastructure." },
+  { s: "vocab", q: "What's a PT and a CT?", a: "Potential Transformer (PT) and Current Transformer (CT) — instrument transformers that step down high voltages/currents to safe levels (typically 120V or 5A) for meters and protective relays to measure. Every metered breaker has CTs; MV gear has PTs too." },
+
+  // ── VOCABULARY — Cooling Plant ─────────────────────────────
+  { s: "vocab", q: "What does CHW mean?", a: "Chilled Water — the water loop that AHUs and CRAHs use to absorb heat from the air. Typically supplied at 44-55°F in traditional designs, higher (60-75°F) in modern hyperscale." },
+  { s: "vocab", q: "What's CWS and CWR?", a: "Chilled Water Supply (cold side, leaving chiller) and Chilled Water Return (warm side, after picking up heat in the building). The temperature difference is the 'CHW delta-T,' usually around 10-15°F." },
+  { s: "vocab", q: "What's CDW (condenser water)?", a: "Condenser Water — loop between the chiller's condenser and the cooling tower. Carries the heat the chiller removed from CHW out to the tower for rejection to outside air." },
+  { s: "vocab", q: "What does HW mean in HVAC?", a: "Hot Water — heating water loop. Less relevant in pure data centers (the IT load is the heat source), but standard in commercial buildings for perimeter heat and reheat coils." },
+  { s: "vocab", q: "What's TES?", a: "Thermal Energy Storage — chilled water or ice tanks. Make cold water during off-peak hours (cooler ambient = more efficient chillers, cheaper electricity), discharge during peak. Load-shifting strategy that lowers both PUE and cost." },
+  { s: "vocab", q: "What's DX?", a: "Direct Expansion — refrigerant cooling without a chilled water loop. Refrigerant evaporates directly in an air-side coil. Found in CRACs, RTUs, residential AC. Simpler but less efficient at scale than chilled water." },
+
+  // ── VOCABULARY — Operations ────────────────────────────────
+  { s: "vocab", q: "What's a MOP?", a: "Method of Procedure — formal step-by-step document for a specific planned task (e.g., 'Replace UPS-3 input filter capacitors'). Defines steps, expected results, abort criteria, approver, executor. Peer-reviewed before execution." },
+  { s: "vocab", q: "What's an SOP?", a: "Standard Operating Procedure — recurring routine procedure (e.g., 'Monthly generator load bank test'). Same steps every time. Baseline reference." },
+  { s: "vocab", q: "What's an EOP?", a: "Emergency Operating Procedure — what you do when something is actively going wrong (e.g., 'Loss of utility A-side power'). Designed to be followed under stress. Practiced via drills." },
+  { s: "vocab", q: "What's a MOM?", a: "Methods of Maintenance — preventive maintenance procedures. Recurring inspection and service routines (filter changes, belt tension, lube schedules, calibrations)." },
+  { s: "vocab", q: "What's LOTO?", a: "Lockout/Tagout — OSHA-required procedure (29 CFR 1910.147) to isolate energy sources, lock the disconnect in off position, and tag it before working on equipment. Each worker applies their own lock. Verify zero energy before work begins." },
+  { s: "vocab", q: "What is PPE?", a: "Personal Protective Equipment — gear that protects workers from hazards. For electrical work, NFPA 70E governs PPE categories (Cat 1-4) based on arc-flash incident energy." },
+  { s: "vocab", q: "What is PM (operations)?", a: "Preventive Maintenance — scheduled service before failure occurs (oil changes, filter swaps, belt tensioning, calibrations). Goal: maximize PM and minimize CM." },
+  { s: "vocab", q: "What is CM (operations)?", a: "Corrective Maintenance — reactive service after failure occurs. Mission-critical environments push hard on PM so CM events stay rare." },
+  { s: "vocab", q: "What is RCA?", a: "Root Cause Analysis — methodology to identify the underlying cause of a failure rather than just the immediate trigger. 5-Whys is a common technique. Drives long-term fixes, not band-aids." },
+  { s: "vocab", q: "What's a CoE at Amazon?", a: "Correction of Error — Amazon's blameless post-incident document. Format: summary, impact, timeline, 5 Whys, lessons learned, action items with owners. The point is organizational learning, not blame." },
+  { s: "vocab", q: "What's a CAB?", a: "Change Advisory Board — group that reviews and approves changes before execution. Different orgs structure it differently; Amazon has a strong culture of peer-reviewed change with explicit rollback plans." },
+
+  // ── VOCABULARY — Reliability ───────────────────────────────
+  { s: "vocab", q: "What's MTBF?", a: "Mean Time Between Failures — average time between failures of a repairable system. Higher is better. Indicates reliability of a component or system." },
+  { s: "vocab", q: "What's MTTR?", a: "Mean Time To Repair (or Recovery) — average time to restore service after a failure. Lower is better. Indicates maintainability and recovery speed." },
+  { s: "vocab", q: "What's RTO?", a: "Recovery Time Objective — target time to be back online after an incident. Drives DR architecture choices: a 5-minute RTO requires hot standby; a 4-hour RTO might allow warm backup." },
+  { s: "vocab", q: "What's RPO?", a: "Recovery Point Objective — maximum acceptable data loss measured in time. RPO = 5 min means you can lose at most 5 min of data. Drives backup and replication frequency." },
+  { s: "vocab", q: "What's an SLA?", a: "Service Level Agreement — contractual commitment to a service level (uptime %, response time, etc.). Hyperscale commits to 99.99% or higher. Drives redundancy, oncall, and incident response design." },
+
+  // ── VOCABULARY — Standards ─────────────────────────────────
+  { s: "vocab", q: "What is ASHRAE?", a: "American Society of Heating, Refrigerating, Air-Conditioning Engineers. Owns TC9.9 data center thermal guidelines (Classes A1-A4), Standard 188 (Legionella prevention), Standard 34 (refrigerant safety classes), and 90.1 (energy efficiency)." },
+  { s: "vocab", q: "What's NFPA?", a: "National Fire Protection Association. Key standards: NFPA 70 = National Electrical Code (NEC). NFPA 70E = electrical safety in the workplace. NFPA 110 = emergency/standby power. NFPA 25 = sprinkler system inspection/testing." },
+  { s: "vocab", q: "What's IEEE?", a: "Institute of Electrical and Electronics Engineers. Owns key standards: IEEE 519 = harmonic distortion limits. IEEE 1547 = distributed generation interconnection. IEEE 802 = networking (802.1Q VLANs, 802.3 Ethernet, etc.)." },
+  { s: "vocab", q: "What's OSHA?", a: "Occupational Safety and Health Administration — workplace safety regulator. Relevant CFRs: 29 CFR 1910.147 = LOTO. 29 CFR 1910.269 = electrical power generation/transmission. 29 CFR 1910.146 = confined space entry." },
+  { s: "vocab", q: "What's the Uptime Institute?", a: "Industry body that defines data center Tier I-IV classifications (single path, redundant components, concurrently maintainable, fault-tolerant) and certifies designs, facilities, and operations. AWS data centers are typically Tier III-IV equivalent." },
+  { s: "vocab", q: "What's TIA-942?", a: "Telecommunications Industry Association infrastructure standard for data centers. Defines cabling, redundancy levels (Rated 1-4), and other physical infrastructure requirements. Complementary to Uptime Institute Tiers." },
+
+  // ── MAGIC NUMBERS ──────────────────────────────────────────
+  { s: "numbers", q: "BACnet/IP port number?", a: "UDP 47808 (0xBAC0 in hex)" },
+  { s: "numbers", q: "Modbus TCP port number?", a: "TCP 502" },
+  { s: "numbers", q: "Maximum devices on an MS/TP segment without a repeater?", a: "32 unit loads" },
+  { s: "numbers", q: "Maximum RS-485 cable length?", a: "~4,000 feet (1,200 meters) at lower baud rates" },
+  { s: "numbers", q: "Standard RS-485 termination resistance?", a: "120 Ω at each end of the trunk" },
+  { s: "numbers", q: "Most common MS/TP baud rates?", a: "9,600 / 38,400 / 76,800. 76,800 is the modern default." },
+  { s: "numbers", q: "How many wires on RS-485?", a: "Two for differential data (A and B) plus signal reference / shield" },
+  { s: "numbers", q: "1 horsepower in watts?", a: "~746 W" },
+  { s: "numbers", q: "Three-phase power formula?", a: "P = √3 × V × I × PF" },
+  { s: "numbers", q: "Single-phase power formula?", a: "P = V × I × PF" },
+  { s: "numbers", q: "4-20 mA current loop — what represents 0% and 100%?", a: "4 mA = 0% (live zero), 20 mA = 100%" },
+  { s: "numbers", q: "0-10 VDC signal — what represents 0% and 100%?", a: "0 V = 0%, 10 V = 100%" },
+  { s: "numbers", q: "Typical building power factor target?", a: "≥ 0.9 (utilities often penalize below this)" },
+  { s: "numbers", q: "ASHRAE TC9.9 Class A1 recommended envelope?", a: "64.4-80.6°F (18-27°C), dewpoint 5.5-15°C, 60% RH max" },
+  { s: "numbers", q: "ASHRAE Class A2 allowable envelope?", a: "50-95°F (10-35°C). Common for modern data centers." },
+  { s: "numbers", q: "ASHRAE Class A3 allowable envelope?", a: "41-104°F (5-40°C)" },
+  { s: "numbers", q: "ASHRAE Class A4 allowable envelope?", a: "41-113°F (5-45°C). Toughest — for free-cooling-everywhere designs." },
+  { s: "numbers", q: "Typical chilled water supply temp in a traditional data center?", a: "44-45°F (6-7°C)" },
+  { s: "numbers", q: "Modern higher-efficiency CHWS temps in hyperscale?", a: "60-75°F (15-24°C) — much higher because IT envelope allows warmer supply air" },
+  { s: "numbers", q: "Typical condenser water leaving temp at design?", a: "85°F (29°C); lower when wet-bulb permits" },
+  { s: "numbers", q: "PUE — perfect / hyperscale / typical?", a: "1.0 perfect / 1.1-1.2 hyperscale / 1.5-1.6 industry average" },
+  { s: "numbers", q: "Generator startup time on utility loss?", a: "~10-15 seconds to start, sync voltage/frequency, and accept load. UPS bridges that gap." },
+  { s: "numbers", q: "How long should UPS batteries hold load?", a: "Typically 5-15 minutes — enough to start the generator and transfer, with margin" },
+  { s: "numbers", q: "2N vs N+1?", a: "N+1 = one extra unit beyond design load on one path. 2N = two fully independent systems, each capable of full load." },
+  { s: "numbers", q: "Arc flash Category 2 PPE minimum?", a: "8 cal/cm² — the most common floor PPE for switchgear work (arc-rated long sleeves, face shield, balaclava)" },
+  { s: "numbers", q: "Arc flash boundary definition?", a: "Distance at which incident energy drops to 1.2 cal/cm² — threshold for second-degree skin burn" },
+
+  // ── ELECTRICAL ─────────────────────────────────────────────
+  { s: "electrical", q: "State Ohm's Law.", a: "V = I × R. Voltage equals current times resistance." },
+  { s: "electrical", q: "State the power formula.", a: "P = V × I (or P = I²R, or P = V²/R). Measured in watts." },
+  { s: "electrical", q: "Difference between real, reactive, and apparent power?", a: "Real (kW) = useful work done. Reactive (kVAR) = power that bounces back and forth in inductive/capacitive components, does no useful work but loads the system. Apparent (kVA) = vector sum, what the utility must deliver. PF = kW/kVA." },
+  { s: "electrical", q: "What's power factor?", a: "Ratio of real power to apparent power. PF=1.0 means all delivered power does useful work. PF=0.7 means 30% of delivered current is reactive and 'wasted' from the utility's perspective." },
+  { s: "electrical", q: "Why does a data center care about power factor?", a: "Low PF means higher current for the same useful kW — bigger conductors, bigger transformers, utility demand charges, more I²R losses. Server PSUs are PFC-corrected to ~0.95+ but it still matters at scale." },
+  { s: "electrical", q: "What is a VFD?", a: "Variable Frequency Drive — varies a motor's speed by changing the frequency of the AC power feeding it." },
+  { s: "electrical", q: "Why are VFDs more efficient than valve/damper throttling?", a: "Fan and pump power scales with the cube of speed (affinity laws). Running a fan at 80% speed uses about 50% of full power. Throttling a damper at full fan speed wastes the difference as heat." },
+  { s: "electrical", q: "Three problems VFDs cause that you should mention?", a: "(1) Harmonics back onto the line — non-linear loads distort upstream waveform. (2) Bearing currents — VFD-induced shaft voltages arc through motor bearings. (3) EMI — RF-noisy, can disrupt MS/TP comms if cabling runs too close." },
+  { s: "electrical", q: "How are VFD harmonics mitigated?", a: "Line reactors, harmonic filters, 18-pulse drives, or K-rated transformers upstream." },
+  { s: "electrical", q: "What are the 4 main components of a UPS?", a: "(1) Rectifier — AC→DC. (2) Battery — DC storage. (3) Inverter — DC→AC clean regulated. (4) Static Bypass Switch — solid-state fallback to raw utility if UPS fails." },
+  { s: "electrical", q: "What does the rectifier do in a UPS?", a: "Converts incoming AC to DC. Feeds both the battery to keep it charged and the inverter to feed the load." },
+  { s: "electrical", q: "What does the inverter do?", a: "Converts DC back to clean, regulated, sine-wave AC for the load." },
+  { s: "electrical", q: "What does the static bypass switch do?", a: "Instantly transfers the load to raw utility (or maintenance bypass) if the UPS itself fails. Fast enough that the load doesn't see the transfer." },
+  { s: "electrical", q: "What's double-conversion / online UPS topology?", a: "Load always runs through the inverter. AC→DC→AC continuously. Best protection — load fully isolated from utility disturbances. Standard in data centers." },
+  { s: "electrical", q: "What's line-interactive UPS topology?", a: "Load runs off utility, UPS conditions voltage with an autotransformer, transfers to battery on failure. Cheaper. Not data center grade." },
+  { s: "electrical", q: "What's eco-mode on a UPS?", a: "Run the load off utility through the static bypass when utility is clean, only engaging the inverter when needed. Saves the ~3-5% double-conversion loss but adds a few milliseconds of transfer time on utility disturbance. PUE vs ride-through trade-off." },
+  { s: "electrical", q: "What's an ATS?", a: "Automatic Transfer Switch. Senses utility power loss, starts generator, transfers load, transfers back when utility is stable and the generator has cooled down." },
+  { s: "electrical", q: "Walk through the sequence on utility loss.", a: "(1) ATS senses loss. (2) Generator start command. (3) Generator runs up to speed/voltage (~10-15s). (4) ATS transfers load to gen. (5) Utility returns; ATS times for stability. (6) ATS transfers back to utility. (7) Generator runs unloaded for cooldown, then stops." },
+  { s: "electrical", q: "Open vs closed transition on an ATS?", a: "Open = break-before-make, brief outage during transfer, UPS bridges. Closed = make-before-break, sources momentarily paralleled, no outage but requires voltage/frequency/phase sync. Mission-critical default is closed transition." },
+  { s: "electrical", q: "What's an STS?", a: "Static Transfer Switch — solid-state, sub-cycle (4-8 ms) transfer between two synchronized AC sources. Faster than an ATS. Used at the PDU level to feed single-corded loads from a dual-path infrastructure." },
+  { s: "electrical", q: "What's a PDU in a data center?", a: "Power Distribution Unit. Takes the upstream UPS feed (typ. 480V) and steps it down via transformer to rack-distribution voltage (208V or 415V), then distributes through branch breakers to RPPs or racks." },
+  { s: "electrical", q: "What's an EPMS?", a: "Electrical Power Management System — software platform aggregating real-time data from breakers, meters, UPS, ATS, generators, switchgear into a single pane of glass for the electrical infrastructure." },
+  { s: "electrical", q: "Common EPMS vendors?", a: "Schneider PowerLogic ION / PowerSCADA, Eaton Power Xpert, ABB / GE Multilin platforms." },
+  { s: "electrical", q: "What does a power quality meter measure?", a: "Voltage, current, frequency, real/reactive/apparent power, power factor, total harmonic distortion (THD), kWh, sag/swell capture." },
+  { s: "electrical", q: "Why does THD matter in a data center?", a: "Non-linear loads (server PSUs, VFDs) distort the waveform. High THD causes neutral conductor overheating, transformer overheating, breaker nuisance trips. IEEE 519 limits current THD at the point of common coupling." },
+  { s: "electrical", q: "What's K-factor on a transformer?", a: "A rating indicating how well a transformer handles harmonic-rich loads. K-1 = linear; K-13 or K-20 are designed for heavy harmonics (data center server load)." },
+  { s: "electrical", q: "Difference between dry-type and liquid-filled transformers?", a: "Dry-type uses air or solid insulation, lower fire hazard, OK indoors, smaller capacity. Liquid-filled (oil or less-flammable fluid) better cooling, higher capacity, more efficient, typically outdoors or in vaulted rooms." },
+  { s: "electrical", q: "Delta vs Wye configuration?", a: "Delta = three windings in a triangle, no neutral, line voltage = phase voltage. Wye = three windings to a common neutral, line voltage = √3 × phase voltage, neutral available for single-phase loads. Data centers typically delta primary / wye secondary." },
+  { s: "electrical", q: "What's a paralleling switchgear / switchboard?", a: "Switchgear that lets multiple generators synchronize and share load on a common bus instead of running individually. Standard in hyperscale for N+1 or 2N generator plants." },
+  { s: "electrical", q: "How does a generator sync with another source?", a: "Match voltage (AVR), match frequency (governor controls shaft speed), match phase angle (synchronizer). When all three are within tolerance, the breaker closes and sources parallel in." },
+  { s: "electrical", q: "What's an AVR?", a: "Automatic Voltage Regulator. Senses generator output voltage and adjusts rotor field current to hold voltage at setpoint regardless of load." },
+  { s: "electrical", q: "What's a governor on a generator?", a: "Control that maintains shaft speed (and therefore frequency) by modulating fuel injection. Electronic governors (e.g., Woodward) talk to the EPMS / paralleling controls." },
+  { s: "electrical", q: "Diesel generator prime vs standby vs continuous rating?", a: "Standby = full nameplate but only during outages, limited annual hours. Prime = unlimited hours, average load below nameplate. Continuous = unlimited hours at full nameplate. Data center gensets are standby-rated." },
+  { s: "electrical", q: "What's a load bank?", a: "Resistive (or reactive) load you connect to a generator to test it at full nameplate without putting building load at risk. Critical for commissioning and annual NFPA 110 testing. Burns off wet-stacking deposits from low-load operation." },
+  { s: "electrical", q: "What's selective coordination / breaker coordination?", a: "Designing breaker time-current curves so only the breaker closest to the fault opens — not upstream feeders. Prevents one fault cascading into a facility-wide outage. NEC 700.32 requires it on emergency systems." },
+  { s: "electrical", q: "What's arc flash?", a: "A short-circuit fault arcing through air. Plasma temperatures >35,000°F, pressure wave from rapid air expansion, molten metal, intense UV/IR. Serious risk during energized switchgear work." },
+  { s: "electrical", q: "What standard governs arc flash safety?", a: "NFPA 70E in the US (CSA Z462 in Canada). Defines required PPE based on incident energy (cal/cm²), boundary distances, and work permits." },
+  { s: "electrical", q: "NFPA 70E PPE categories?", a: "Four categories by incident energy:\nCat 1 ≥ 4 cal/cm²\nCat 2 ≥ 8 cal/cm² (most common — arc-rated long sleeves, face shield)\nCat 3 ≥ 25 cal/cm² (full arc flash suit with hood)\nCat 4 ≥ 40 cal/cm² (heaviest suit)" },
+  { s: "electrical", q: "What's the arc flash boundary?", a: "Distance from a potential arc source at which incident energy drops to 1.2 cal/cm² (threshold for 2nd-degree skin burn). Beyond it, no arc-rated PPE required." },
+  { s: "electrical", q: "What's LOTO?", a: "Lockout/Tagout — OSHA 29 CFR 1910.147 procedure to isolate energy sources, lock the disconnect in off position, and tag it before working on equipment. Each worker applies their own lock. Zero energy verified before work begins." },
+  { s: "electrical", q: "What's 'verify zero energy' / live-dead-live test?", a: "Step 1: Test your meter on a known live source (confirms meter works). Step 2: Test the work point (should read zero). Step 3: Re-test your meter on the known live source (confirms meter didn't fail mid-test)." },
+  { s: "electrical", q: "What's an energized work permit?", a: "Required for any work on energized equipment >50 V. Documents the hazard, required PPE, procedure, and gets supervisor sign-off." },
+  { s: "electrical", q: "What's a drawout breaker?", a: "Switchgear breaker that can be racked out of the bus on rails for maintenance without de-energizing the whole gear. Positions: Connected (in service), Test (control circuits live but bus disconnected), Disconnected (fully isolated)." },
+  { s: "electrical", q: "Main-Tie-Main configuration?", a: "Two main breakers from two sources with a tie breaker between two bus sections. Can run tie-open (sources isolated) or tie-closed (sources paralleled). Standard data center topology — lets you isolate either source for maintenance while the other carries load." },
+  { s: "electrical", q: "Vacuum vs SF6 circuit breaker?", a: "Vacuum = modern MV standard, contacts open inside a vacuum bottle, arc extinguishes at current zero. SF6 = uses sulfur hexafluoride gas, common in higher MV, being phased down due to high GWP." },
+  { s: "electrical", q: "What's ground fault protection (GFP)?", a: "Required on services >1000A at 480V (NEC 230.95). Detects unbalanced current between phases and neutral via a zero-sequence CT; trips before damage." },
+  { s: "electrical", q: "What's a cascading trip?", a: "When a fault causes an upstream breaker to trip in addition to (or instead of) the downstream breaker closest to the fault. Result: much wider blast radius than necessary. Prevented by selective coordination." },
+  { s: "electrical", q: "What is 'wet stacking' on a generator?", a: "Incomplete combustion deposits in the exhaust system from a diesel running long periods at light load. Annual full-load load-bank testing burns those deposits off." },
+  { s: "electrical", q: "Why hyperscale uses 415Y/240V instead of 208Y/120V?", a: "Server PSUs accept 277V and 240V directly. Skipping the PDU stepdown transformer saves a transformer's worth of losses and improves PUE." },
+
+  // ── MECHANICAL / COOLING ───────────────────────────────────
+  { s: "mechanical", q: "Purpose of a BMS in a data center?", a: "Hold the IT environment within the ASHRAE envelope at the lowest energy cost. Monitor/control AHUs, CRAHs, chillers, cooling towers, pumps, dampers. Track temp/humidity/pressure across the white space. Alarm on faults. Log trends." },
+  { s: "mechanical", q: "Components of a controls system?", a: "Supervisory layer (head-end, operator graphics), field controllers (run the logic), I/O devices (sensors and actuators), network layer (BACnet/IP, MS/TP, Modbus), end devices (VAVs, AHUs, chillers)." },
+  { s: "mechanical", q: "How does an AHU work?", a: "Fan pushes air across a cooling coil, through filters, out through dampers. Supply fan draws hot return air over the coil where it gives up heat to chilled water, then delivers cool air to the space. CHW valve modulates to hit SAT setpoint; fan VFD modulates to hit static pressure setpoint." },
+  { s: "mechanical", q: "Difference between CRAH and CRAC?", a: "CRAH = chilled water coil, no compressor in the unit (central CHW plant supplies it). CRAC = self-contained DX refrigeration loop, compressor inside the unit. CRAH common in large data centers (centralized plant); CRAC common in smaller rooms." },
+  { s: "mechanical", q: "What's hot aisle / cold aisle?", a: "Server racks arranged so all server fronts (intakes) face one aisle (cold) and all backs (exhausts) face the next aisle (hot). Cool supply air delivered to cold aisles; hot exhaust collected from hot aisles. Prevents recirculation." },
+  { s: "mechanical", q: "What's hot aisle containment?", a: "Physical separation (walls, ceiling panels, doors) of the hot aisle so exhaust can't mix with cold supply before returning to the cooling unit. Lets you run higher SAT setpoints, higher CRAH return temps, better PUE." },
+  { s: "mechanical", q: "What's cold aisle containment?", a: "Same idea but the cold supply aisle is enclosed. Either approach works; hot aisle containment is more common in newer designs." },
+  { s: "mechanical", q: "Chimney cabinet?", a: "Server cabinet with a ducted exhaust chimney that captures hot exhaust directly and returns it to the ceiling plenum. Rack-level containment." },
+  { s: "mechanical", q: "Walk through the refrigeration cycle.", a: "Four stages — Compress, Condense, Expand, Evaporate:\n1) Compressor takes low-pressure vapor → high-pressure vapor (work in)\n2) Condenser: high-pressure vapor rejects heat outside → high-pressure liquid\n3) Expansion valve: pressure drops sharply → low-pressure liquid/vapor mix\n4) Evaporator: low-pressure refrigerant absorbs heat → low-pressure vapor → back to compressor" },
+  { s: "mechanical", q: "What does the expansion valve do?", a: "Drops pressure of the high-pressure liquid refrigerant. Causes a temperature drop and a phase change into a low-pressure liquid/vapor mix that's ready to absorb heat in the evaporator." },
+  { s: "mechanical", q: "TXV vs EEV?", a: "TXV = Thermostatic Expansion Valve, mechanical, modulates based on superheat sensed at the evaporator outlet via a bulb. EEV = Electronic Expansion Valve, stepper-motor driven, computer-controlled, more precise. Modern equipment uses EEVs." },
+  { s: "mechanical", q: "Common refrigerants you should know?", a: "R-134a (older HFC, GWP ~1430, phasing down), R-410A (very common in DX, GWP ~2088, phasing down), R-454B and R-32 (newer A2L mildly flammable, lower GWP), R-1234ze and R-1234yf (HFOs, very low GWP — used in modern chillers)." },
+  { s: "mechanical", q: "What's GWP?", a: "Global Warming Potential — a multiplier vs CO₂ over 100 years. R-134a GWP ~1430 means 1 kg of leak = 1430 kg CO₂ equivalent. AIM Act mandates 85% production phase-down of HFCs by 2036." },
+  { s: "mechanical", q: "What's an A2L refrigerant?", a: "ASHRAE 34 safety classification. A = low toxicity, 2L = mildly flammable with low burning velocity. Newer refrigerants like R-32, R-454B. Different handling, leak detection, and equipment room ventilation than older A1 (non-flammable) refrigerants." },
+  { s: "mechanical", q: "How does evaporative cooling work?", a: "Water evaporates into an airstream. The latent heat of vaporization comes from the air itself, so the air gives up sensible heat (dry-bulb temp drops). Drier the incoming air = more cooling." },
+  { s: "mechanical", q: "Direct vs indirect evap?", a: "Direct = air contacts wet media or spray, picks up moisture, comes out cooler AND more humid. Indirect = a secondary airstream is evap-cooled, then a heat exchanger transfers heat from primary supply air to that cool secondary stream. Indoor air stays dry." },
+  { s: "mechanical", q: "Why is evap so effective at Umatilla?", a: "High desert, low wet-bulb most of the year, large wet-bulb depression. Evap can take 90°F+ outdoor dry-bulb down to 60°F supply with just water and fans — no compressors. Drives PUE down dramatically." },
+  { s: "mechanical", q: "Why wouldn't you use evap in Atlanta or Houston?", a: "Humid climate — air already near saturation, small wet-bulb depression. Evap doesn't get you much cooling and adds moisture you don't want. You run mechanical chillers more." },
+  { s: "mechanical", q: "What's an air-side economizer?", a: "Bring outdoor air directly into the data center as supply air when OAT is cool enough. 'Free cooling' — fans and dampers only, no compressor work. Requires humidity control and good filtration." },
+  { s: "mechanical", q: "What's a water-side economizer?", a: "When outdoor wet-bulb is low enough, the cooling tower makes cold water directly without running the chiller. Tower-cooled water bypasses chiller through a heat exchanger to chill the building water. Saves compressor energy." },
+  { s: "mechanical", q: "What's a chiller?", a: "A refrigeration system whose evaporator chills water (instead of air directly). The chilled water then loops out to AHUs/CRAHs around the facility." },
+  { s: "mechanical", q: "Air-cooled vs water-cooled chiller?", a: "Air-cooled = condenser is finned coils with fans, rejects heat directly to outside air. Simpler, no tower, less efficient at high OAT. Water-cooled = condenser uses condenser water from a cooling tower. More efficient, more complex, water treatment + towers. Hyperscale is water-cooled." },
+  { s: "mechanical", q: "Centrifugal vs screw vs scroll chiller?", a: "Centrifugal = 200-3000+ tons, efficient at part load with VFDs, big plants. Screw = 50-1500 tons, reliable, common medium-large. Scroll = 5-50 tons, used in CRACs and small chillers." },
+  { s: "mechanical", q: "What's a magnetic-bearing / oil-free chiller?", a: "Centrifugal chiller (Danfoss Turbocor is the well-known one) with magnetic levitation bearings instead of oil-lubricated bearings. No oil management, very efficient at part load, fast restart. Common in modern hyperscale." },
+  { s: "mechanical", q: "Primary vs primary-secondary chilled water loop?", a: "Primary = constant flow through chiller evaporators (chillers like that). Secondary = variable flow to the building, driven by load. Decoupler bridge between them so they don't fight. Variable secondary saves pump energy at part load." },
+  { s: "mechanical", q: "What's a decoupler?", a: "A short hydraulic bridge between primary and secondary chilled water loops where flow can go either direction depending on the pumping rates. Prevents the two loops from fighting each other." },
+  { s: "mechanical", q: "Approach and range on a cooling tower?", a: "Approach = cooled water temp minus outdoor wet-bulb (5-7°F at design). Range = hot water in minus cool water out (typ. 10°F). Lower approach = more effective tower, limited by wet-bulb." },
+  { s: "mechanical", q: "What's drift on a cooling tower?", a: "Water droplets carried out of the tower by airflow. Lost water + Legionella vector risk if not controlled. Drift eliminators minimize it." },
+  { s: "mechanical", q: "What's blowdown?", a: "Intentionally discharging some recirculating tower water to control buildup of dissolved minerals as water evaporates. Otherwise concentration rises until you get scale and corrosion." },
+  { s: "mechanical", q: "What's makeup water?", a: "Fresh water added to the tower basin to replace evaporation + drift + blowdown. The dominant water cost in a water-cooled data center." },
+  { s: "mechanical", q: "Static, total, and dynamic pressure?", a: "Static = pressure pushing out on duct walls, what the fan must overcome. Velocity (dynamic) = pressure from air motion, kinetic energy. Total = static + velocity." },
+  { s: "mechanical", q: "How do you measure each pressure type?", a: "Static port (perpendicular to flow) reads static. Pitot tube (facing into flow) reads total. Subtract → velocity pressure → calculate CFM from velocity × area." },
+  { s: "mechanical", q: "Why does humidity matter in a data center — two failure modes?", a: "Too dry → static electricity buildup → ESD damage. Too humid → condensation on cold surfaces → corrosion, shorts, mold. ASHRAE recommended historically 40-60% RH; A1 envelope widened to 8-80% with dew-point bounds. Most ops run 40-55%." },
+  { s: "mechanical", q: "How does the BMS add humidity?", a: "Steam humidifiers (electric or gas-fired), ultrasonic, or evaporative humidifiers. BMS senses RH and modulates humidifier output." },
+  { s: "mechanical", q: "How does the BMS remove humidity?", a: "Cooling coil — when air is cooled below dew point on the coil, water condenses out, drops onto the drain pan. That's why coils have drain pans and P-traps." },
+  { s: "mechanical", q: "What's chilled water reset?", a: "Strategy where the BMS raises CHWS temperature when the worst-case load doesn't require the coldest water. Higher CHWS = higher chiller efficiency. Common control optimization." },
+  { s: "mechanical", q: "What's supply air temp reset?", a: "Similar — raise SAT setpoint when zones don't need the coldest air. Reduces reheat and lets cooling coil run at less depression." },
+  { s: "mechanical", q: "What's plenum pressure control?", a: "For raised-floor or ducted-supply data centers, the BMS maintains a target static pressure under the floor (or in the plenum) by modulating CRAH fan VFDs. Stable plenum pressure = stable supply to all racks." },
+  { s: "mechanical", q: "What's a glycol loop?", a: "Outdoor portions of water loops (cooling tower piping, dry coolers, exposed condenser water) are filled with propylene glycol mixed with water to prevent freezing. 30% glycol drops freezing point to ~5°F; 50% to ~-30°F. Reduces heat-transfer capacity by 10-15%." },
+  { s: "mechanical", q: "ASHRAE Class A1 vs A2 vs A3 vs A4?", a: "A1 allowable 59-90°F (tight). A2 allowable 50-95°F (most modern data centers). A3 allowable 41-104°F (hyperscale). A4 allowable 41-113°F (free-cooling-everywhere designs). Recommended range is 64.4-80.6°F for all classes." },
+  { s: "mechanical", q: "Why does cooling tower water need treatment?", a: "Open to air = dust, organics, biological growth. Chemical treatment includes biocides (alternated to prevent resistance), scale inhibitors, corrosion inhibitors. Legionella prevention per ASHRAE 188 is critical — cooling towers are the #1 industrial Legionnaires' source." },
+  { s: "mechanical", q: "What's kW/ton on a chiller?", a: "Chiller efficiency metric — lower is better. 1 ton = 12,000 BTU/hr. Older centrifugal ~0.55 kW/ton at design; modern magnetic-bearing ~0.30 kW/ton at design and ~0.25 at part load. Air-cooled typically 1.0-1.2 kW/ton." },
+  { s: "mechanical", q: "What's IPLV?", a: "Integrated Part-Load Value — weights chiller efficiency across a typical load profile rather than just design conditions. Better real-world efficiency metric than design kW/ton." },
+
+  // ── CONTROLS & NETWORKING ──────────────────────────────────
+  { s: "controls", q: "BACnet vs Modbus — one-line difference?", a: "BACnet is object-oriented and self-describing (devices announce what they are). Modbus is register-based (you need the vendor's register map to know what each register means)." },
+  { s: "controls", q: "BACnet physical layers?", a: "MS/TP (over RS-485), BACnet/IP (over Ethernet/UDP 47808), BACnet Ethernet (rare), ARCNET (legacy)." },
+  { s: "controls", q: "Modbus variants?", a: "RTU (binary over RS-485, most common in the field), ASCII (rare), TCP (wrapped in Ethernet, port 502)." },
+  { s: "controls", q: "4 Modbus data types?", a: "Coils (1 bit, R/W — relay outputs), Discrete Inputs (1 bit, read-only — digital status), Input Registers (16-bit, read-only — sensor readings), Holding Registers (16-bit, R/W — setpoints)." },
+  { s: "controls", q: "Modbus function codes you should know?", a: "01 Read Coils\n02 Read Discrete Inputs\n03 Read Holding Registers (most common)\n04 Read Input Registers\n05 Write Single Coil\n06 Write Single Register\n15 (0x0F) Write Multiple Coils\n16 (0x10) Write Multiple Registers" },
+  { s: "controls", q: "How is a 32-bit float represented in Modbus?", a: "Split across two 16-bit registers. Endianness/word order matters — different vendors put high word in different places. You consult the register map. Getting this wrong gives nonsense readings." },
+  { s: "controls", q: "BACnet object types you should know?", a: "Analog Input (AI), Analog Output (AO), Analog Value (AV), Binary Input (BI), Binary Output (BO), Binary Value (BV), Multistate Input/Output/Value (MSI/MSO/MSV), Schedule, Calendar, Trend Log, Notification Class, Device." },
+  { s: "controls", q: "AV vs AI — what's the difference?", a: "AI is tied to a physical input. AV is a virtual analog value — calculated, software-only, or a setpoint. Lives in software, no hardware backing." },
+  { s: "controls", q: "What are BACnet Who-Is / I-Am?", a: "Discovery messages. A device broadcasts 'Who-Is' and devices respond with 'I-Am' announcing their device instance number. That's how BACnet networks self-discover." },
+  { s: "controls", q: "What's a BACnet BBMD?", a: "BACnet Broadcast Management Device. Forwards BACnet broadcasts (like Who-Is) across IP subnets, because routers don't forward UDP broadcasts. Required when BACnet/IP traffic must cross subnets." },
+  { s: "controls", q: "What's BACnet COV?", a: "Change of Value. A device only sends an update when the value changes by more than a configured threshold — instead of being polled every cycle. Reduces traffic. Threshold is tunable per point." },
+  { s: "controls", q: "Why does COV threshold tuning matter?", a: "Too tight (e.g., 0.1°F on a noisy temp sensor) floods the trunk with updates and can saturate it. Too loose delays reaction. Field tuning balances responsiveness vs network load. A classic fix on a saturated trunk: bump temp COV from 0.1°F to 0.5°F to cut chatter." },
+  { s: "controls", q: "What's a BACnet device instance?", a: "Unique identifier for a BACnet device on the network — a 22-bit integer (0 to ~4M). Must be globally unique on the BACnet internetwork. Conflicts cause unstable comms." },
+  { s: "controls", q: "What's an MS/TP MAC address?", a: "Single byte (0-127) identifying a device on an MS/TP segment. Must be unique on that segment. Master devices participate in token passing; slave devices respond only when polled." },
+  { s: "controls", q: "How does MS/TP token passing work?", a: "One device at a time holds the token. While holding, it can send messages and poll for new devices. Then passes the token to the next master in line. Token loss = trunk silence until a master reinitializes. Common symptom of a fault." },
+  { s: "controls", q: "What's RS-485?", a: "A differential serial physical-layer standard. Two wires (A and B) carrying opposite voltages; receiver looks at the difference. Differential signaling = excellent common-mode noise rejection — good for long runs in electrically noisy environments." },
+  { s: "controls", q: "Why is RS-485 daisy-chained and not star?", a: "Transmission line model depends on a single defined characteristic impedance with terminations at each end. Stubs off the trunk create reflections that cause signal integrity problems. Star = stubs everywhere = corrupted data." },
+  { s: "controls", q: "Where do termination resistors go on RS-485?", a: "At each physical end of the trunk (and only at the ends). Typically 120 Ω, matching cable characteristic impedance. Prevents reflections from open ends." },
+  { s: "controls", q: "Common RS-485 problems in the field?", a: "Improper EOL termination, A/B polarity swap at a single device, star topology instead of daisy-chain, address conflicts, baud rate mismatch on one device, VFD noise from drives wired on or near the trunk, shield grounded at both ends causing ground loops." },
+  { s: "controls", q: "When do you see BACnet/IP vs MS/TP?", a: "BACnet/IP = supervisor-to-supervisor backbone, connects controllers with Ethernet. MS/TP = field bus, RS-485 daisy-chain connecting many small devices (VAVs, FECs, end devices) to a supervisor." },
+  { s: "controls", q: "Tools to diagnose MS/TP issues?", a: "In Metasys: SCT (System Configuration Tool), CCT (Controller Configuration Tool), SMP (Site Management Portal). Look at PFM (Poll For Master) counts, retries, dropped tokens, missed/silent devices." },
+  { s: "controls", q: "How do you troubleshoot loss of comms?", a: "Bottom-up. Layer 1 (physical): power, wiring, polarity, RS-485 termination, noise sources. Layer 2 (protocol): baud rate, address conflicts, token-pass health, COV thresholds. Layer 3 (network, IP-based): IP/subnet/gateway, VLAN, BBMD, firewall UDP 47808." },
+  { s: "controls", q: "What's a BACnet gateway?", a: "A device that translates between BACnet and another protocol — typically Modbus for VFDs, generators, third-party chillers. The gateway presents the third-party device as BACnet objects to the BMS. JCI CGM is one example." },
+  { s: "controls", q: "What's a router in BACnet terms?", a: "A device that forwards BACnet messages between two network segments — typically between MS/TP and BACnet/IP. The supervisor (NAE/SNE) usually plays this role." },
+  { s: "controls", q: "What's a closed-loop control system?", a: "A system that uses feedback. Measures process variable, compares to setpoint, adjusts output to drive error toward zero. Continuously." },
+  { s: "controls", q: "Explain PID.", a: "Three terms. P (Proportional) = output proportional to current error. I (Integral) = output proportional to accumulated error over time, kills steady-state offset. D (Derivative) = output proportional to rate of change of error, anticipates. In HVAC most 'PID' loops are really PI with D=0 because temp sensors are noisy." },
+  { s: "controls", q: "Field example of a PID loop?", a: "Supply air temp control on an AHU. PV = supply air temp, SP = setpoint (e.g., 55°F), Output = chilled water valve position. Loop modulates valve to hold SAT." },
+  { s: "controls", q: "P too high — what happens?", a: "Hunting / oscillation. Valve swings back and forth, can't settle." },
+  { s: "controls", q: "I too aggressive — what happens?", a: "Overshoot, then oscillation. Integral builds up faster than the process can respond." },
+  { s: "controls", q: "When would you turn off the derivative term?", a: "On noisy process variables (especially temperature) where D amplifies noise into output chatter. Most HVAC loops." },
+  { s: "controls", q: "What's integral windup?", a: "Integral term keeps accumulating even when output is saturated (e.g., valve already 100% open). When error finally reduces, integrator is so wound up it takes a long time to back off → overshoot. Mitigated by clamping or anti-windup logic." },
+  { s: "controls", q: "What's a setpoint dead band?", a: "A small range around setpoint where the controller doesn't react. Prevents constant micro-adjustment when PV is essentially at setpoint. Useful on sluggish processes." },
+  { s: "controls", q: "Temperature sensor types in BMS?", a: "Thermistor (semiconductor, nonlinear, 10K Type II / Type III most common). RTD (Pt100/Pt1000, very linear, accurate, more expensive). Thermocouple (two dissimilar metals, wide range, fast response — uncommon in HVAC)." },
+  { s: "controls", q: "2-wire vs 3-wire vs 4-wire RTD?", a: "2-wire = simplest, lead resistance shows up as error. 3-wire = compensates assuming all leads identical (most common in BMS). 4-wire = full compensation, lab-grade." },
+  { s: "controls", q: "Most common temp sensor field issue?", a: "Wrong sensor type configured in the controller. 10K Type II vs 10K Type III gives a believable but wrong reading because resistance curves are similar but not identical. Always verify configured type matches physical sensor." },
+  { s: "controls", q: "What's an interposing relay?", a: "A small relay that sits between a controller's low-voltage output and a higher-voltage or higher-current load. Example: 24 VDC BO drives a relay coil; the relay's contacts switch 120 VAC to a contactor. Voltage isolation, current isolation, fault protection." },
+  { s: "controls", q: "Why use a flyback diode or snubber on a relay?", a: "Inductive coil loads generate back-EMF when de-energized. The flyback diode (DC) or RC snubber (AC) clamps that voltage spike, protecting the driving output transistor." },
+  { s: "controls", q: "Walk through a point-to-point checkout.", a: "(1) Walk every point physically — sensor location/orientation, wiring on correct terminal, polarity, sensor type matches config, shield, EOL. (2) Power up. (3) Verify each point at the controller: AI against calibrated reference, BI by toggling field device, AO by commanding 50% and checking signal at device terminals, BO by commanding on and verifying contact closure. (4) Document on P2P sheet, initial each point." },
+  { s: "controls", q: "What does P2P checkout catch?", a: "Miswired sensors, wrong sensor type configurations, dead sensors, polarity flipped on actuators, DOs on wrong terminals, mislabeled drawings, missed jumper/DIP settings on controller channels." },
+
+  // ── NETWORKING & IT (Cisco-style fundamentals) ─────────────
+  { s: "networking", q: "What's the OSI 7-layer model?", a: "Physical, Data Link, Network, Transport, Session, Presentation, Application. Mnemonic: 'Please Do Not Throw Sausage Pizza Away.' Most BMS troubleshooting touches layers 1-4 and 7." },
+  { s: "networking", q: "Which OSI layer is RS-485 at?", a: "Layer 1 (Physical). The wires, voltage levels, differential signaling. MS/TP and Modbus RTU ride on top of this physical layer." },
+  { s: "networking", q: "Which OSI layer is Ethernet at?", a: "Layer 2 (Data Link). MAC addresses, frames, switching. CSMA/CD historically, full-duplex switched today." },
+  { s: "networking", q: "Which OSI layer is IP at?", a: "Layer 3 (Network). Routing between subnets. IP addresses live here." },
+  { s: "networking", q: "Which OSI layer is TCP/UDP at?", a: "Layer 4 (Transport). End-to-end delivery, port numbers. TCP is connection-oriented and reliable; UDP is connectionless and fire-and-forget." },
+  { s: "networking", q: "Which OSI layer is BACnet at?", a: "Application layer (Layer 7). BACnet/IP rides on UDP at Layer 4, which rides on IP at Layer 3, which can run over Ethernet (L2) or other physical layers." },
+  { s: "networking", q: "TCP vs UDP?", a: "TCP is connection-oriented and reliable — three-way handshake (SYN, SYN-ACK, ACK), acknowledgments, retransmissions, ordering. UDP is connectionless and best-effort — no handshake, no acks, lower overhead. BACnet/IP uses UDP because broadcasts (Who-Is) require it." },
+  { s: "networking", q: "Why does BACnet use UDP not TCP?", a: "Because BACnet depends on broadcasts (Who-Is, I-Am, alarms) which TCP doesn't support. UDP also matches BACnet's lightweight request/response pattern — no handshake overhead for small messages." },
+  { s: "networking", q: "What is an IP address?", a: "Layer 3 logical identifier. IPv4 = 32-bit, written as four dot-separated octets (e.g., 192.168.1.100). IPv6 = 128-bit, eight colon-separated groups. Most BMS deployments are still IPv4." },
+  { s: "networking", q: "What's a subnet mask?", a: "Defines which bits of an IP are the network portion vs the host portion. 255.255.255.0 means the first 24 bits identify the network and the last 8 bits identify the host (256 addresses, 254 usable for hosts)." },
+  { s: "networking", q: "What is CIDR notation?", a: "Classless Inter-Domain Routing — compact way to write subnet masks. /24 = 255.255.255.0 (256 addresses). /16 = 255.255.0.0 (65,536). /22 = 1024 addresses. Each step doubles the address range." },
+  { s: "networking", q: "What are the private IP ranges?", a: "10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16. Reserved by RFC 1918 for internal networks, not routable on the public internet. BMS networks live entirely in private space." },
+  { s: "networking", q: "What is NAT?", a: "Network Address Translation. Maps private (RFC 1918) IPs behind a router to one or more public IPs. Lets many internal hosts share an external address. The home/office router doing PAT (port address translation) is the most common case." },
+  { s: "networking", q: "What is ARP?", a: "Address Resolution Protocol. Maps an IP address (Layer 3) to a MAC address (Layer 2) so frames can be delivered on a LAN. 'Who has 192.168.1.5? Tell 192.168.1.1.' Stored in the ARP cache." },
+  { s: "networking", q: "What is DHCP?", a: "Dynamic Host Configuration Protocol. Server hands out IP addresses, subnet masks, gateways, DNS to clients automatically. BMS supervisors should be static IP (not DHCP) so they don't move on you." },
+  { s: "networking", q: "What is DNS?", a: "Domain Name System. Resolves names (e.g., bms.facility.local) to IP addresses. Less common in BMS itself but used for NTP servers, vendor support endpoints, and management tools." },
+  { s: "networking", q: "What's a default gateway?", a: "The IP address the host sends packets to when the destination isn't on its local subnet. Usually the LAN router's interface. Without a default gateway, you can only talk to hosts on your own subnet." },
+  { s: "networking", q: "Routing vs switching?", a: "Routing = forwarding packets between Layer 3 subnets, done by a router. Switching = forwarding frames within a Layer 2 segment, done by a switch. A 'Layer 3 switch' does both — switches at line rate within a VLAN, routes between VLANs." },
+  { s: "networking", q: "What's a VLAN?", a: "Virtual LAN. Logical Layer 2 segment created on a switch, identified by an 802.1Q tag (VLAN ID 1-4094). Separates broadcast domains and traffic without requiring separate physical switches. BMS traffic is typically on its own VLAN." },
+  { s: "networking", q: "Access vs trunk port?", a: "Access port = belongs to one VLAN; the switch strips/adds the VLAN tag automatically and the endpoint sees untagged frames. Trunk port = carries multiple VLANs with 802.1Q tags, used between switches or to VLAN-aware devices." },
+  { s: "networking", q: "What is STP?", a: "Spanning Tree Protocol. Prevents Layer 2 loops in switched networks by electing a root bridge and blocking redundant paths until needed. A loop without STP causes broadcast storms that take down the LAN. Modern variants: RSTP, MSTP." },
+  { s: "networking", q: "What is link aggregation / LACP?", a: "Combines multiple physical Ethernet links into one logical link for bandwidth and redundancy. LACP (802.3ad) negotiates the bundle dynamically. Cisco's flavor is EtherChannel. Used heavily in data center spine-leaf for inter-switch links." },
+  { s: "networking", q: "Common BMS-relevant TCP/UDP ports?", a: "UDP 47808 (BACnet/IP). TCP 502 (Modbus TCP). TCP 1911/4911 (Niagara/Fox). UDP 161/162 (SNMP poll/trap). UDP 514 (Syslog). UDP 123 (NTP). TCP 22 (SSH). TCP 443 (HTTPS). TCP 23 (Telnet — avoid)." },
+  { s: "networking", q: "What is SNMP?", a: "Simple Network Management Protocol. UDP 161 (polling) and 162 (traps). Used by IT monitoring to query device state and receive alerts. Many BMS supervisors expose SNMP for integration with NMS platforms." },
+  { s: "networking", q: "What is syslog?", a: "Standard for forwarding log messages over UDP 514 (or TCP 6514 with TLS). Network devices, servers, and many BMS supervisors send logs to a central syslog collector for retention and analysis." },
+  { s: "networking", q: "What is NTP?", a: "Network Time Protocol — UDP 123. Synchronizes clocks. Critical in data centers — without synced clocks, alarm timestamps and CoE timelines are useless. Hierarchical: stratum 0 (atomic), stratum 1 (NTP servers directly attached), etc." },
+  { s: "networking", q: "Stateful vs stateless firewall?", a: "Stateless = filters each packet against static rules independently. Stateful = tracks connection state (SYN/SYN-ACK/ACK), allows return traffic for established connections automatically. Modern firewalls are stateful." },
+  { s: "networking", q: "What is port forwarding?", a: "A NAT rule that maps an external port on the firewall/router to an internal host:port. Lets external traffic reach a service behind NAT. Generally avoid for BMS — VPN access is safer than exposing controllers directly." },
+  { s: "networking", q: "What's an out-of-band management network?", a: "A separate physical network used only for management traffic (switch consoles, server IPMI/BMC, PDU management, remote KVMs). Isolated from production so you can still reach devices when the production net is down. Essential in data centers." },
+  { s: "networking", q: "What's spine-leaf data center architecture?", a: "Two-tier topology: leaf switches connect to servers (top-of-rack), spine switches interconnect all leaves. Every leaf is one hop from every other leaf via any spine. Replaces older three-tier core/aggregation/access designs. Predictable latency and high east-west bandwidth." },
+  { s: "networking", q: "What's a ToR switch?", a: "Top-of-Rack switch — a leaf switch mounted at the top of a server rack providing network connectivity to all servers in that rack. Reduces cable runs and simplifies layout. Each rack has one (or two for redundancy)." },
+  { s: "networking", q: "What's the Purdue model?", a: "Reference model for industrial network segmentation. Level 0 = physical process (sensors/actuators). L1 = controllers/PLCs. L2 = supervisory (HMI/SCADA). L3 = site operations. L3.5 = DMZ. L4-5 = enterprise IT. Defines firewall boundaries between OT and IT zones." },
+  { s: "networking", q: "What's a DMZ?", a: "Demilitarized Zone. A segregated network between trusted internal and untrusted external networks, used to expose services with controlled access. In OT/IT integration, the L3.5 DMZ is where data is exchanged between control system zones and enterprise networks." },
+  { s: "networking", q: "What's a VPN?", a: "Virtual Private Network. Encrypted tunnel over a public network. Site-to-site VPN connects two networks; client/SSL VPN connects a remote user. Common for vendor remote support on BMS — much safer than port-forwarding controllers." },
+  { s: "networking", q: "What's a data diode?", a: "One-way data flow device used in OT security. Allows data to leave (e.g., trend data to enterprise reporting) but physically prevents anything from coming back in. Used in high-security industrial environments where remote attack surface must be zero." },
+  { s: "networking", q: "What do ping, traceroute, and nslookup tell you?", a: "Ping confirms basic IP reachability (ICMP echo request/reply). Traceroute shows the path hops a packet takes to a destination (using ICMP TTL or UDP probes). Nslookup queries DNS to resolve a name to an IP. First three tools in any IT troubleshooting." },
+  { s: "networking", q: "What is Wireshark?", a: "Packet capture and analysis tool. Lets you see the actual frames/packets on a network — every header, every byte. Indispensable for troubleshooting BACnet/IP traffic, verifying Who-Is broadcasts, confirming firewall rules pass the right packets." },
+  { s: "networking", q: "BACnet network number vs IP subnet?", a: "Every BACnet network segment has a numeric BACnet network number (1-65534) configured on routers. Distinct from the IP subnet, but often aligned 1-to-1 in design. BACnet routers forward inter-segment traffic by network number, not by IP." },
+  { s: "networking", q: "What's PoE?", a: "Power over Ethernet. Delivers DC power over the same Cat6 cable as data. 802.3af = 15.4W. 802.3at = 30W. 802.3bt = up to 90W. Used for IP cameras, VoIP phones, wireless APs, and some BACnet/IP sensors and access controls." },
+  { s: "networking", q: "Fiber vs copper Ethernet?", a: "Fiber = light over glass, long distance (kilometers on single-mode), immune to EMI, used for backbone and inter-building links. Copper = electrical over twisted-pair Cat5e/6/6a, max 100m, cheaper, used for end devices and rack patching." },
+  { s: "networking", q: "What's a broadcast domain?", a: "The scope within which a Layer 2 broadcast frame propagates. A VLAN is one broadcast domain. Routers stop broadcasts. Big flat broadcast domains are bad — broadcast storms can overwhelm devices. BMS networks are typically segmented into smaller broadcast domains." },
+  { s: "networking", q: "What's a collision domain?", a: "Scope within which two devices' transmissions can collide on a shared medium. With modern full-duplex switched Ethernet, each switch port is its own collision domain (effectively eliminated). Relevant historically with hubs; today, more of a definition question." },
+  { s: "networking", q: "What's an ACL (access control list)?", a: "List of permit/deny rules on a router or firewall that filters traffic by source IP, destination IP, port, and protocol. Standard ACLs use source IP only; extended ACLs include port and protocol. Cornerstone of network segmentation." },
+  { s: "networking", q: "What is QoS?", a: "Quality of Service. Mechanism to prioritize certain traffic over others when bandwidth is contended. DSCP marking, queuing strategies (priority queue, WFQ), traffic shaping. Less critical on overprovisioned data center fabrics but matters on WAN links." },
+  { s: "networking", q: "What's a MAC address?", a: "Media Access Control address — 48-bit Layer 2 hardware identifier, written as six hex pairs (e.g., 00:1A:2B:3C:4D:5E). First 24 bits identify the manufacturer (OUI); last 24 are device-unique. Usually burned in at manufacture." },
+  { s: "networking", q: "Hub vs switch vs router?", a: "Hub = Layer 1, repeats every frame out every port (obsolete). Switch = Layer 2, learns MAC addresses and forwards frames only to the destination port (and broadcasts everywhere). Router = Layer 3, forwards packets between subnets based on IP routing tables." },
+  { s: "networking", q: "What's Cisco IOS 'show running-config' for?", a: "Displays the current active configuration on the device. 'show running-config' = current/RAM. 'show startup-config' = saved to NVRAM, loaded at boot. 'copy running-config startup-config' = save changes so they survive reboot." },
+  { s: "networking", q: "How do you enter Cisco config mode?", a: "From user EXEC (prompt >), type 'enable' to get to privileged EXEC (prompt #), then 'configure terminal' (or 'conf t') for global config (prompt (config)#). Sub-modes: interface, line, router, etc." },
+  { s: "networking", q: "What's the difference between 'shutdown' and 'no shutdown' on a Cisco interface?", a: "'shutdown' administratively disables the interface (admin down). 'no shutdown' enables it. New Cisco router interfaces default to shutdown; you must 'no shut' to bring them up. Common gotcha for new techs." },
+  { s: "networking", q: "What's DHCP snooping?", a: "Switch security feature that limits which ports are allowed to send DHCP server responses. Prevents rogue DHCP servers from handing out malicious config. Important in BMS networks where you don't want a tech's laptop to accidentally serve DHCP." },
+  { s: "networking", q: "What is 802.1X port-based authentication?", a: "Standard that requires devices to authenticate (typically against a RADIUS server) before being granted network access on a switch port. Increasingly common in OT environments to control what plugs into BMS networks." },
+
+  // ── OPERATIONS LANGUAGE ────────────────────────────────────
+  { s: "ops", q: "What's a MOP?", a: "Method of Procedure. Formal step-by-step document for a specific planned activity — e.g., 'Take UPS-3 offline for capacitor replacement.' Defines steps, expected results, abort criteria, safety, approver, executor." },
+  { s: "ops", q: "What's an SOP?", a: "Standard Operating Procedure. Recurring routine procedure — e.g., 'Monthly generator load bank test.' Same steps every time, baseline reference." },
+  { s: "ops", q: "What's an EOP?", a: "Emergency Operating Procedure. What you do when something is actively going wrong — e.g., 'Loss of utility A-side power.' Designed to be followed under stress." },
+  { s: "ops", q: "Why does a data center care about MOPs?", a: "Most outages come from human error during planned work. A well-written MOP forces thinking through every step, peer review, defined abort criteria, documentation. Prevents 'I thought I knew what I was doing' failures." },
+  { s: "ops", q: "What's peer review on a MOP?", a: "Another qualified technician reviews the MOP before execution to catch mistakes, missing steps, unsafe sequences, wrong assumptions. Mandatory in mission-critical environments. At Amazon, MOPs typically go through engineering and ops review." },
+  { s: "ops", q: "What's a change window?", a: "Scheduled time block during which planned changes can occur. Outside the window, no non-emergency changes. Lets the facility predict and contain risk." },
+  { s: "ops", q: "What's a CAB?", a: "Change Advisory Board. Group that reviews and approves changes before execution. Different orgs structure it differently. Amazon has a strong culture of peer-reviewed change with clear rollback plans." },
+  { s: "ops", q: "What's a change freeze?", a: "Period during which no changes are allowed except emergency. Common around holidays, major events (re:Invent), or major capacity ramps." },
+  { s: "ops", q: "What's concurrent maintainability?", a: "The ability to perform any maintenance activity on any component without taking the load offline. Required for Uptime Institute Tier III. Means dual paths, isolation valves, transfer capability everywhere." },
+  { s: "ops", q: "What's fault tolerance?", a: "The ability to survive a single unplanned failure without any service impact. Stricter than concurrent maintainability — requires Tier IV / 2N or 2N+1. A single point of failure anywhere drops you out." },
+  { s: "ops", q: "What's a single point of failure (SPOF)?", a: "A component whose failure brings down a larger system or service. Architectural goal in a data center is to eliminate them via redundancy and isolation." },
+  { s: "ops", q: "What's a failure domain / blast radius?", a: "The scope of impact when a component fails. Goal is to make blast radius small (one rack, one row) rather than large (one room, one data hall, one site)." },
+  { s: "ops", q: "What's CoE at Amazon?", a: "Correction of Error. Post-incident document covering summary, impact, timeline, 5 Whys, lessons learned, and action items with owners. Blameless and action-oriented. The point is organizational learning, not blame." },
+  { s: "ops", q: "What's a 5-Whys analysis?", a: "Keep asking 'why' — each answer becomes the next question — until you reach a root cause that's actually actionable. Typically about 5 levels deep, sometimes more. Surfaces process / design issues, not just immediate triggers." },
+  { s: "ops", q: "PM vs CM?", a: "PM = Preventive Maintenance, scheduled before failure. CM = Corrective Maintenance, reactive after failure. Goal: maximize PM, minimize CM." },
+  { s: "ops", q: "What's a runbook?", a: "Documented sequence of steps for a recurring operational task or response. Often shared with the on-call team so anyone can execute consistently." },
+  { s: "ops", q: "What's a war room / incident bridge?", a: "Real-time coordination call during an active incident. Site lead, oncall engineers, vendor support, management on one channel. Captures decisions and timelines." },
+  { s: "ops", q: "What's a near miss?", a: "An incident that could have caused harm or outage but didn't — usually because of luck or a backup. Reporting them is critical — cheapest data point for finding fragile spots before they fail for real." },
+  { s: "ops", q: "How do you triage an alarm?", a: "(1) Confirm the alarm against data — pull trends, current readings. Don't trust verbal reports alone. (2) Assess scope and severity. (3) Apply the relevant EOP if one exists. (4) Communicate to ops while working. (5) Document after — what you saw, what you did, timeline." },
+  { s: "ops", q: "Safety hierarchy of controls?", a: "Elimination → Substitution → Engineering controls → Administrative controls → PPE. Always prefer eliminating the hazard or designing it out before relying on procedures or PPE." },
+  { s: "ops", q: "What's risk classification on a change?", a: "Most operators classify by risk:\nL1 = minimal, normal ops OK\nL2 = minor, may impact redundancy\nL3 = significant, reduces redundancy near N\nL4 = high, potential customer-visible\nHigher risk = more reviewers, tighter window, planned-only windows." },
+  { s: "ops", q: "What's a hot work permit?", a: "Required for any work producing flame, sparks, or significant heat (welding, cutting, grinding). Requires fire watch, extinguisher staged, area cleared of combustibles." },
+
+  // ── SCENARIOS (45-second answers) ──────────────────────────
+  { s: "scenarios", q: "Generator fails to start on utility loss. UPS is on battery. What's your immediate response?", a: "Time-check first — how long do I have on battery? Get to the generator, comms with ops continuing. Check start battery voltage, fuel level, coolant temp, controller fault flags (e-stop, low-fuel cut, low oil pressure). If a fault, clear and attempt manual start. If still no start, prepare for graceful load shed and notify ops to start orderly shutdown well before UPS exhausts. Document the full sequence — it will be reviewed." },
+  { s: "scenarios", q: "Alarm storm — same fault on 8 CRAHs simultaneously. What's likely?", a: "Common upstream cause, not 8 separate failures. Most likely: chilled water plant trip, supply feeder/VFD power loss, BACnet trunk dropping all of them, or a schedule overriding all of them at once. Pull trends — did 8 PVs change at the same instant? That confirms common cause. Don't troubleshoot 8 units; troubleshoot the common upstream dependency." },
+  { s: "scenarios", q: "Coolant leak detected in the underfloor plenum. Priority order?", a: "Stop the leak (isolate the leaking section via isolation valves), contain the spill (barricade for slip hazard), protect equipment (shed cooling load to redundant path if needed), alert facilities for cleanup, document. THEN diagnose: fitting failure, hose failure, coil pinhole. Don't skip containment to chase the diagnosis." },
+  { s: "scenarios", q: "BACnet trunk goes silent after a thunderstorm. Where do you start?", a: "Power first — verify control panel power. Then physical layer: surge damage to MS/TP transceivers is common after lightning. Test the transceiver chips on suspect controllers with a known-good cable. Likely culprit: a transceiver fried near where lightning entered the structure, or the shield ground bond loosened or burnt. Document the surge event — neighboring sites may need checks too." },
+  { s: "scenarios", q: "Point-to-point testing — 6 of 20 points failing. What's likely?", a: "Cluster the failures first. If all 6 are on the same controller — config issue. If all on the same rack — termination strip or wiring harness. If all are the same sensor type — wrong type configured. If random — likely independent issues. Always look for a pattern before assuming 6 independent problems." },
+  { s: "scenarios", q: "Customer demands a change inside the change freeze. How do you handle?", a: "Document the request, escalate up the chain — don't unilaterally bypass change control. If it's a genuine emergency (safety or ongoing customer impact), there's an emergency change path. If it's 'I forgot to schedule this,' say it has to wait. The person who breaks change control to make a customer happy short-term is also the person who causes the next outage." },
+  { s: "scenarios", q: "AHU cycling between heat and cool every 2 minutes. What's wrong?", a: "Either the deadband between heat/cool setpoints is too narrow, or there's mode-fight in the sequence logic. Pull the trend: look at SP transitions and PV oscillation. Common fixes: widen heat-vs-cool deadband to 4-5°F, add hysteresis, lock out mode changes for several minutes after each transition. Also verify no operator override forcing a mode." },
+  { s: "scenarios", q: "Your supervisor sees field devices but the NOC supervisor on another subnet doesn't.", a: "BBMD config issue. Your supervisor is on the same subnet as field devices, so it sees BACnet broadcasts natively. NOC supervisor is on a remote subnet — it needs the BBMD on the field subnet to forward Who-Is broadcasts, or it needs to register as a foreign device. Verify the BBMD's BDT (Broadcast Distribution Table) includes the NOC's subnet, or that the NOC is configured as a foreign device." },
+  { s: "scenarios", q: "CRAH supply temp creeping up despite the chilled water valve commanded 100% open.", a: "Insufficient cooling supply — either chiller plant isn't producing enough cold water, the secondary loop isn't delivering it to this unit (closed isolation valve, air-bound, low flow), or this CRAH's coil is fouled. Verify CHWS temp at the unit, verify flow, check coil for fouling. Also check the airflow side — fan VFD limited, filter loaded, return air bypassing the coil." },
+  { s: "scenarios", q: "UPS battery test reveals a string failure mid-test. What do you do?", a: "Abort the test, return UPS to normal operation, restore N+1 redundancy posture immediately. Document the failed string, schedule replacement, notify stakeholders that you're operating on reduced battery redundancy until repaired. Don't keep stress-testing — you might lose more capacity right when you'd need it." },
+  { s: "scenarios", q: "Installed a new AHU, point list doesn't match field reality. What now?", a: "Stop and reconcile before commissioning. Walk every field point physically, build a verified as-built list, compare to design intent. Flag discrepancies — missing points, extra points, wrong types. Don't paper over the gap by 'making it fit' in software; you'll be building control loops against ghost points. Resolve before close-out." },
+  { s: "scenarios", q: "ATS won't transfer back to utility — generator has been running 4 hours past restoration.", a: "ATS is sensing voltage or frequency outside its 'utility stable' window. Verify utility actual voltage at the line side with a meter. If utility is in spec but ATS still won't transfer, check ATS timer settings (re-transfer delay), control fuses, sensing PT. Could also be a control fault — manual override or fault flag locked it on generator. Don't manually force a transfer without ops sign-off." },
+  { s: "scenarios", q: "Cold aisle running warm in one row only — other rows fine.", a: "Local supply problem. Check floor tiles — are the right perforated tiles in front of that row? Plenum pressure stable across the floor? Anything blocking under-floor airflow to that row? Local hot air recirculation past containment? Pull rack intake temps for the warm row and adjacent rows to map the gradient. A CRAH unit facing that row may be reduced or off." },
+  { s: "scenarios", q: "10 zones show identical zone temperature — suspicious. What's happening?", a: "Either physical (a shared duct or shared sensor wiring), or software (graphic alias bug, control program referencing the same point). Check the BACnet object instance IDs on those zones in the supervisor — are they actually distinct, or all pointing at one source? Walk to the actual spaces with a handheld thermometer to verify what's real." },
+  { s: "scenarios", q: "Two senior engineers want different control sequences. You have to pick one.", a: "Document both proposals and their assumptions. Identify the success criteria — what does 'good' look like — and which option better meets it on energy, stability, complexity. If a clear winner, recommend it with reasoning. If genuinely tied, recommend the simpler/more conservative option and propose A/B testing in two test rooms. Get the decision in writing before implementing." },
+  { s: "scenarios", q: "VFD trips on overcurrent intermittently. Possible causes?", a: "Mechanical: bearings failing, belt tension wrong, fan/pump cavitation. Electrical: phase imbalance upstream, loose connection heating intermittently. Drive params: accel ramp too aggressive, current limit set tight. Load: something dirty, load profile changed. Pull the drive fault log and a motor current trend to narrow it down before swapping parts." },
+  { s: "scenarios", q: "Outdoor air damper stuck full-open in -10°F weather. Priority?", a: "Prevent freeze damage first — the freezestat should already have tripped the fan; if not, manually disable the fan immediately to stop drawing in cold air. Close the damper manually if the actuator is dead. Then diagnose: actuator failed, signal lost, jammed mechanism, control logic forcing it open. Mechanical safety first, controls forensics second." },
+  { s: "scenarios", q: "Operator says 'the BMS won't let me override.' What do you check?", a: "Privilege level — does their account have override permission? BACnet object priority array — is something higher-priority already commanding the point? Operator override is typically priority 8; if priority 1-7 is set elsewhere, lower-priority overrides won't take. Out-of-service flag on the object? Lock-out logic in the program? Walk the priority array systematically." },
+  { s: "scenarios", q: "You inherit a poorly-documented site mid-project. Where do you start?", a: "Build your own ground truth. Walk the site physically. Pull a snapshot of the device tree from the supervisor. Cross-reference against any drawings. Sketch a one-page architecture for your reference. Talk to operators, security, the electrician — tribal knowledge counts. Don't trust the docs without verifying, but don't try to redocument the whole site week one either. Build understanding through the work." },
+  { s: "scenarios", q: "Customer IT wants to put the BMS supervisor on the main corporate LAN. How do you respond?", a: "Push back politely with reasoning. BMS traffic should be on its own VLAN at minimum, with controlled routing in/out. Reasons: traffic isolation, security boundary, prevent corporate broadcast storms from disrupting BACnet/IP, prevent BMS broadcasts from polluting corporate. Suggest a dedicated VLAN plus firewall rules. If they push back, propose at minimum a separate VLAN with multi-homed management access." },
+  { s: "scenarios", q: "Phantom alarm — alarm fires but no device condition shows. What's going on?", a: "Check object reliability and status flags — a sensor flagged 'over-range' or 'sensor fault' can fire an alarm on a value the operator can't see in the graphic. Check alarm-suppression logic — delay timers, deadbands not respected. Check for stale alarms that didn't auto-clear. In MS/TP, comms-fault alarms can fire even when devices respond if the reliability isn't being read. Read the object's actual properties, not just present value." },
+  { s: "scenarios", q: "Sequence-of-events shows simultaneous breaker trips. What's that mean?", a: "Either a real common-mode event — a bus fault tripping multiple feeders through selective coordination — or a timing artifact (events recorded with the same timestamp because resolution is too coarse, but actually nanoseconds apart). Look at upstream protection: did the main trip? Ground fault? In a coordinated system, simultaneous trips usually signal either upstream fault or that coordination has failed." },
+  { s: "scenarios", q: "A trend log has gaps. Why might that be?", a: "Supervisor went down or its disk filled. The controller's trend buffer overflowed and the supervisor didn't poll in time. Time changed (DST or NTP correction). COV threshold so tight that nothing was recorded because nothing changed enough. Comms loss to the controller for that window. Cross-reference other points on the same controller — gaps everywhere = comms/supervisor; gap on one point = COV/object config." },
+  { s: "scenarios", q: "Vendor wants to remote-update controller firmware tomorrow. Your response?", a: "Slow down. Required: MOP, peer review, change ticket, rollback plan, scheduled change window, on-site presence during the update. Verify what's in the firmware (release notes) and what rollback looks like if it bricks. Don't accept 'we'll just push it real quick.' That's how outages happen. Schedule it properly." },
+  { s: "scenarios", q: "You find an open energized panel with no permit. What do you do?", a: "Stop work immediately on anything I'm doing in the area. Identify who's working on the panel — they need an energized work permit and proper PPE, or de-energize. If no one's working it, close the panel and lock the room. Report to safety lead. Don't ignore it — open panels without permits are exactly the conditions that cause arc-flash incidents." },
+  { s: "scenarios", q: "An AHU drops offline at 2 AM and you're on-call. Walk through it.", a: "Confirm details from BMS — alarm type, supervisor still seeing the controller, comms loss vs hardware fault. If comms: power, network path, switch, IP. If hardware: pull recent trends, check current valve/fan/temp states, upstream CHW, downstream space conditions. If space at risk, transfer load to sibling unit. Communicate ETA to ops. Escalate to mechanical if refrigeration fault. Document after." },
+  { s: "scenarios", q: "Customer says system has been 'acting weird' for a week. Where do you start?", a: "Don't trust verbal report alone. Get specifics — symptoms, alarms, times of day. Pull trend data from supervisor — that tells you what actually happened, not what was perceived. Look for patterns: tied to schedules, outdoor conditions, equipment cycles? Data first, hypotheses second." },
+  { s: "scenarios", q: "You're commissioning and a point won't read correctly.", a: "Point-to-point process. Sensor type configured matches physical sensor? Wiring polarity correct? Sensor itself — measure resistance against spec curve. Controller channel jumpers/DIPs correct? Is the controller seeing the raw signal but applying wrong scaling? Verify each step before going to the next." },
+  { s: "scenarios", q: "Mechanical contractor says BMS is wrong, you think mechanical is.", a: "Bring data instead of arguing. Pull trend logs, controller readings, sensor verifications. Show what the BMS is reading and how I've verified those readings. If data shows the mechanical issue, conversation moves from opinions to evidence. Bisect the data path before assigning blame." },
+  { s: "scenarios", q: "Behind on commissioning timeline and customer is escalating.", a: "Direct concrete communication, not vague reassurances. State exactly what's working, what's not, what I'm doing today, realistic path to occupancy. Triage: what must work for occupancy vs what's punch-list. Customers can handle bad news; they can't handle vague." },
+  { s: "scenarios", q: "Senior tech tells you to do something you think is wrong.", a: "Disagree respectfully — state reasoning with data if I have it. If still disagree and action is reversible / low-blast-radius, do their call and document. If high-blast-radius or violates safety/process, escalate to a third party rather than just comply. Backbone + Earn Trust." },
+  { s: "scenarios", q: "An alarm fires that you've never seen before.", a: "Look it up before acting. Equipment manual, ADS docs, vendor knowledge base. Confirm what the alarm actually means before assuming. If urgent, take stabilizing action (transfer load) while looking up root cause. Document the alarm and what it indicated for the next person." },
+  { s: "scenarios", q: "How do you handle being on-call?", a: "Develop a calm, methodical pattern and stick to it under stress: (1) confirm alarm details from data before acting — don't trust verbal reports alone, (2) work systematically through the troubleshooting layers, (3) escalate when warranted, (4) document afterward for the team. Repetition makes on-call manageable rather than chaotic." },
+  { s: "scenarios", q: "Safety hazard someone else created and management doesn't want to address it.", a: "Stop work if the hazard is active. Escalate formally — that's not optional. Document the hazard, the report, the response. Safety isn't something that bends for schedule pressure — it's the one rule with no override." },
+
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const STORAGE_KEY = 'dc-controls-flashcards-v1';
+const SETTINGS_KEY = 'dc-controls-flashcards-settings-v1';
+let progress = loadProgress(); // { [cardKey]: 'known' | 'need' }
+let settings = loadSettings(); // { endpoint, model }
+let activeDeck = [];           // filtered + ordered list of card indices into `cards`
+let currentIdx = 0;            // index into activeDeck
+let isFlipped = false;
+let isShuffled = true;
+let mode = 'flip';             // 'flip' or 'type'
+let isGrading = false;
+let lastGrade = null;          // { grade, feedback, missing }
+let resolvedModel = null;      // exact model name as reported by Ollama /api/tags
+let availableModels = [];      // all model names from /api/tags
+
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  } catch (e) {}
+}
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    return {
+      endpoint: s.endpoint || 'http://localhost:11434',
+      model: s.model || 'llama3.1',
+    };
+  } catch (e) {
+    return { endpoint: 'http://localhost:11434', model: 'llama3.1' };
+  }
+}
+function saveSettingsToStorage() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (e) {}
+}
+function cardKey(card) {
+  // Stable key based on section + question — survives reordering
+  return card.s + '||' + card.q;
+}
+
+// ============================================================
+// DECK BUILDING
+// ============================================================
+function rebuildDeck() {
+  const section = document.getElementById('section-filter').value;
+  const onlyNeed = document.getElementById('only-need').checked;
+  const hideKnown = document.getElementById('hide-known').checked;
+
+  let indices = cards.map((_, i) => i);
+  if (section !== 'all') {
+    indices = indices.filter(i => cards[i].s === section);
+  }
+  if (onlyNeed) {
+    indices = indices.filter(i => progress[cardKey(cards[i])] === 'need');
+  } else if (hideKnown) {
+    indices = indices.filter(i => progress[cardKey(cards[i])] !== 'known');
+  }
+
+  if (isShuffled) {
+    shuffle(indices);
+  }
+
+  activeDeck = indices;
+  currentIdx = 0;
+  isFlipped = false;
+  render();
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+const sectionLabels = {
+  ambush: '⭐ Ambush Fix',
+  vocab: 'Vocabulary',
+  numbers: 'Magic Number',
+  electrical: 'Electrical',
+  mechanical: 'Mechanical',
+  controls: 'Controls',
+  networking: 'Networking / IT',
+  ops: 'Operations',
+  scenarios: 'Scenario',
+};
+
+function render() {
+  const card = activeDeck.length > 0 ? cards[activeDeck[currentIdx]] : null;
+  const cardEl = document.getElementById('card');
+
+  if (!card) {
+    cardEl.innerHTML = `<div class="empty-state"><h2>No cards in this view</h2><p>Try a different section or uncheck the filters above.</p></div>`;
+  } else if (mode === 'type') {
+    // Type mode: card always shows the question; the textarea below is where you answer.
+    cardEl.innerHTML = `
+      <span class="section-tag">${sectionLabels[card.s] || card.s}</span>
+      <div class="card-side q">QUESTION</div>
+      <div class="content">${escapeHtml(card.q)}</div>
+      <span class="tap-hint">type your answer below</span>
+    `;
+  } else {
+    // Flip mode
+    cardEl.innerHTML = `
+      <span class="section-tag">${sectionLabels[card.s] || card.s}</span>
+      <div class="card-side ${isFlipped ? 'a' : 'q'}">${isFlipped ? 'ANSWER' : 'QUESTION'}</div>
+      <div class="content ${isFlipped ? 'answer' : ''}">${escapeHtml(isFlipped ? card.a : card.q)}</div>
+      <span class="tap-hint">${isFlipped ? '✓ K = known · ✗ N = need · → next' : 'tap or space to reveal'}</span>
+    `;
+  }
+
+  // Show/hide type panel and flip button
+  document.getElementById('type-panel').style.display = (mode === 'type' && card) ? 'flex' : 'none';
+  document.getElementById('btn-flip').style.display = (mode === 'flip') ? '' : 'none';
+  // Mode toggle buttons
+  document.querySelectorAll('#mode-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+
+  // Stats and progress bar
+  const totalActive = activeDeck.length;
+  document.getElementById('card-num').textContent = totalActive ? (currentIdx + 1) : 0;
+  document.getElementById('card-total').textContent = totalActive;
+
+  let known = 0, need = 0, unseen = 0;
+  for (const c of cards) {
+    const k = cardKey(c);
+    if (progress[k] === 'known') known++;
+    else if (progress[k] === 'need') need++;
+    else unseen++;
+  }
+  document.getElementById('stat-known').textContent = known;
+  document.getElementById('stat-need').textContent = need;
+  document.getElementById('stat-unseen').textContent = unseen;
+
+  const total = cards.length;
+  document.getElementById('bar-known').style.width = (known / total * 100) + '%';
+  document.getElementById('bar-need').style.width = (need / total * 100) + '%';
+  document.getElementById('bar-seen').style.width = '0%';
+}
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ============================================================
+// ACTIONS
+// ============================================================
+function flipCard() {
+  if (activeDeck.length === 0 || mode === 'type') return;
+  isFlipped = !isFlipped;
+  render();
+}
+function nextCard() {
+  if (activeDeck.length === 0) return;
+  currentIdx = (currentIdx + 1) % activeDeck.length;
+  isFlipped = false;
+  clearAnswer();
+  render();
+}
+function prevCard() {
+  if (activeDeck.length === 0) return;
+  currentIdx = (currentIdx - 1 + activeDeck.length) % activeDeck.length;
+  isFlipped = false;
+  clearAnswer();
+  render();
+}
+function clearAnswer() {
+  const ta = document.getElementById('user-answer');
+  if (ta) ta.value = '';
+  const gc = document.getElementById('grade-result-container');
+  if (gc) gc.innerHTML = '';
+  lastGrade = null;
+  clearDeepDive();
+}
+function skipQuestion() {
+  nextCard();
+  setTimeout(() => {
+    const ta = document.getElementById('user-answer');
+    if (ta) ta.focus();
+  }, 50);
+}
+function switchMode(newMode) {
+  if (newMode === mode) return;
+  mode = newMode;
+  isFlipped = false;
+  clearAnswer();
+  render();
+  if (mode === 'type') {
+    setTimeout(() => {
+      const ta = document.getElementById('user-answer');
+      if (ta) ta.focus();
+    }, 50);
+    // Auto-check Ollama on first switch to type mode
+    if (!window.ollamaChecked) {
+      window.ollamaChecked = true;
+      checkOllamaConnection();
+    }
+  }
+}
+function markCard(status) {
+  if (activeDeck.length === 0) return;
+  const card = cards[activeDeck[currentIdx]];
+  progress[cardKey(card)] = status;
+  saveProgress();
+
+  // If a filter would now hide this card, the deck is stale — rebuild and stay near position
+  const onlyNeed = document.getElementById('only-need').checked;
+  const hideKnown = document.getElementById('hide-known').checked;
+  if ((onlyNeed && status === 'known') || (hideKnown && status === 'known')) {
+    rebuildDeck();
+  } else {
+    nextCard();
+  }
+}
+function resetProgress() {
+  if (!confirm('Reset all card progress? (Cannot be undone.)')) return;
+  progress = {};
+  saveProgress();
+  render();
+}
+
+// ============================================================
+// OLLAMA INTEGRATION
+// ============================================================
+function setOllamaStatus(state, text) {
+  const el = document.getElementById('ollama-status');
+  const txt = document.getElementById('ollama-status-text');
+  el.className = 'ollama-status ' + state;
+  txt.textContent = 'Ollama: ' + text;
+}
+
+async function checkOllamaConnection(showResultInModal = false) {
+  setOllamaStatus('checking', 'checking…');
+  const url = settings.endpoint.replace(/\/$/, '') + '/api/tags';
+  try {
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const models = (data.models || []).map(m => m.name);
+    availableModels = models;
+    // Resolve the actual model name to use:
+    //  1) exact match wins
+    //  2) else first model that starts with "<settings.model>:"
+    //  3) else null (not found)
+    const exact = models.find(m => m === settings.model);
+    const tagMatch = exact ? null : models.find(m => m.startsWith(settings.model + ':'));
+    const matched = exact || tagMatch;
+    if (matched) {
+      resolvedModel = matched;
+      setOllamaStatus('ok', matched + ' ready');
+      if (showResultInModal) {
+        const note = exact
+          ? `✓ Connected. Model "${matched}" is available.`
+          : `✓ Connected. Resolved "${settings.model}" → "${matched}" (will use this exact name for grading).`;
+        const listLine = models.length > 1 ? `\n\nAll installed models: ${models.join(', ')}` : '';
+        showTestResult('ok', note + listLine);
+      }
+      return { ok: true };
+    } else {
+      resolvedModel = null;
+      setOllamaStatus('err', `${settings.model} not pulled`);
+      if (showResultInModal) {
+        showTestResult('err',
+          `Connected to Ollama, but no model matching "${settings.model}" is installed.\n` +
+          `Available models: ${models.length ? models.join(', ') : '(none)'}\n\n` +
+          `Either pull it: ollama pull ${settings.model}\n` +
+          `Or change the model field above to one of the available names and Save.`
+        );
+      }
+      return { ok: false, reason: 'model-missing', models };
+    }
+  } catch (e) {
+    resolvedModel = null;
+    setOllamaStatus('err', 'unreachable');
+    if (showResultInModal) {
+      showTestResult('err',
+        `Couldn't reach Ollama at ${settings.endpoint}.\n` +
+        `Error: ${e.message}\n\n` +
+        `Make sure: (1) Ollama is running, (2) OLLAMA_ORIGINS environment variable is set to * and Ollama restarted afterward, (3) the endpoint URL is correct.`
+      );
+    }
+    return { ok: false, reason: 'unreachable', error: e.message };
+  }
+}
+function showTestResult(state, text) {
+  const el = document.getElementById('test-result');
+  el.className = 'test-result show ' + state;
+  el.textContent = text;
+}
+
+function buildGradingPrompt(question, referenceAnswer, userAnswer) {
+  return `You are grading a candidate's technical interview practice answer for an AWS data center controls technician role. Be fair, encouraging, and accurate.
+
+QUESTION:
+${question}
+
+REFERENCE ANSWER (what a strong candidate would say — the candidate does NOT need to match this verbatim):
+${referenceAnswer}
+
+CANDIDATE'S ANSWER:
+${userAnswer}
+
+Compare the candidate's answer to the reference. Be LENIENT on wording, paraphrasing, abbreviations, and ordering — they don't need to memorize. Be STRICT on technical accuracy and key concepts.
+
+Grade scale:
+- "correct" — captures the key technical points, even if differently worded or briefer
+- "partial" — gets some points but misses important ones, OR has a minor inaccuracy
+- "incorrect" — wrong, mostly empty, or fundamentally misunderstands the topic
+
+Output ONLY a JSON object with this exact shape (no markdown, no extra text):
+{"grade":"correct|partial|incorrect","feedback":"1-2 sentence honest feedback","missing":"specific technical points missing or wrong, or empty string"}`;
+}
+
+async function callOllama(prompt, callOptions = {}) {
+  // Defaults: JSON-formatted output, low temp (good for grading).
+  // For free-form (deep dive), pass { format: null, temperature: 0.4 }.
+  const opts = { format: 'json', temperature: 0.2, ...callOptions };
+  // If we haven't resolved the model name yet, try now so we send the EXACT name to /api/generate
+  if (!resolvedModel) {
+    await checkOllamaConnection(false);
+  }
+  const modelToUse = resolvedModel || settings.model;
+  const url = settings.endpoint.replace(/\/$/, '') + '/api/generate';
+  const body = {
+    model: modelToUse,
+    prompt: prompt,
+    stream: false,
+    options: {
+      temperature: opts.temperature,
+    },
+  };
+  if (opts.format === 'json') {
+    body.format = 'json';
+  }
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+  }
+  const data = await res.json();
+  return data.response || '';
+}
+
+function parseGradeResponse(raw) {
+  // Try parsing as JSON. Models sometimes wrap in markdown code fences or add prose.
+  let txt = String(raw || '').trim();
+  // Strip ```json ... ``` fences
+  txt = txt.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+  // Find first { and last } to extract object if there's surrounding prose
+  const start = txt.indexOf('{');
+  const end = txt.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    txt = txt.slice(start, end + 1);
+  }
+  try {
+    const obj = JSON.parse(txt);
+    const grade = String(obj.grade || '').toLowerCase();
+    if (!['correct', 'partial', 'incorrect'].includes(grade)) {
+      return { grade: 'partial', feedback: String(obj.feedback || 'Model returned an unexpected grade. Treating as partial.'), missing: String(obj.missing || '') };
+    }
+    return {
+      grade,
+      feedback: String(obj.feedback || ''),
+      missing: String(obj.missing || ''),
+    };
+  } catch (e) {
+    // Fallback: pull grade from raw text by keyword
+    const lower = txt.toLowerCase();
+    let grade = 'partial';
+    if (lower.includes('"correct"') || /\bcorrect\b/.test(lower)) grade = 'correct';
+    if (lower.includes('"incorrect"') || /\bincorrect\b/.test(lower)) grade = 'incorrect';
+    return {
+      grade,
+      feedback: 'The grader returned text I couldn\'t parse as JSON. Raw response: ' + txt.slice(0, 300),
+      missing: '',
+    };
+  }
+}
+
+async function gradeAnswer() {
+  if (isGrading) return;
+  if (activeDeck.length === 0) return;
+  const card = cards[activeDeck[currentIdx]];
+  const userAnswer = document.getElementById('user-answer').value.trim();
+  if (!userAnswer) {
+    renderGradeError('Type an answer first.');
+    return;
+  }
+
+  isGrading = true;
+  const btn = document.getElementById('btn-grade');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Grading…';
+
+  try {
+    const prompt = buildGradingPrompt(card.q, card.a, userAnswer);
+    const raw = await callOllama(prompt);
+    const result = parseGradeResponse(raw);
+    lastGrade = result;
+    renderGradeResult(result, card);
+    setOllamaStatus('ok', settings.model + ' ready');
+  } catch (e) {
+    renderGradeError(e.message);
+    setOllamaStatus('err', 'error: ' + (e.message || 'unknown'));
+  } finally {
+    isGrading = false;
+    btn.disabled = false;
+    btn.innerHTML = 'Grade Answer';
+  }
+}
+
+function renderGradeResult(result, card) {
+  const container = document.getElementById('grade-result-container');
+  const icons = { correct: '✓', partial: '~', incorrect: '✗' };
+  const labels = { correct: 'Correct', partial: 'Partially correct', incorrect: 'Not quite' };
+  const missingHtml = result.missing && result.missing.trim()
+    ? `<div class="grade-missing"><strong>Missing or off:</strong> ${escapeHtml(result.missing)}</div>`
+    : '';
+  container.innerHTML = `
+    <div class="grade-result ${result.grade}">
+      <div class="grade-header">
+        <span style="font-size:22px;">${icons[result.grade]}</span>
+        <span>${labels[result.grade]}</span>
+      </div>
+      <div class="grade-feedback">${escapeHtml(result.feedback)}</div>
+      ${missingHtml}
+      <details class="reveal-answer">
+        <summary>Show reference answer</summary>
+        <div class="answer-text">${escapeHtml(card.a)}</div>
+      </details>
+      <div class="card-nav" style="margin-top:14px;">
+        <div class="nav-left">
+          <button onclick="nextCard(); setTimeout(()=>document.getElementById('user-answer').focus(), 50);">Next →</button>
+        </div>
+        <div class="nav-right">
+          <button class="need" onclick="markCard('need')">✗ Need work</button>
+          <button class="known" onclick="markCard('known')">✓ Got it</button>
+        </div>
+      </div>
+    </div>
+  `;
+  // Auto-suggest marking — but don't auto-mark; let the user choose
+  // Auto-scroll the result into view
+  container.querySelector('.grade-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderGradeError(message) {
+  const container = document.getElementById('grade-result-container');
+  container.innerHTML = `
+    <div class="grade-result error">
+      <div class="grade-header">
+        <span style="font-size:22px;">⚠</span>
+        <span>Grader unavailable</span>
+      </div>
+      <div class="grade-feedback">${escapeHtml(message)}</div>
+      <div class="grade-missing">
+        Open <strong>⚙ Settings</strong> in the top bar to check your Ollama endpoint and model name. If you've never set this up, the modal has step-by-step instructions.
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// DEEP DIVE — free-form expanded explanation via Ollama
+// ============================================================
+function buildDeepDivePrompt(question, referenceAnswer) {
+  return `You are an expert mentor helping a candidate study for a BMS / data center controls technician interview. They're reviewing this flashcard and want a deeper explanation than the brief reference answer provides.
+
+QUESTION: ${question}
+
+REFERENCE ANSWER: ${referenceAnswer}
+
+Give a deeper, more textured explanation. Use these four markdown headers EXACTLY:
+
+## How it works
+The actual mechanism, theory, or operational detail beyond the flashcard.
+
+## Why it matters in a data center
+Specific relevance to hyperscale data center operations — PUE, redundancy, blast radius, mission-critical posture, where applicable.
+
+## Common gotchas
+Misconceptions or things interviewers probe on.
+
+## Likely follow-up questions
+2-4 questions an interviewer might ask next, as a bulleted list.
+
+Be technical and plain-spoken — assume the candidate is a strong field technician. Use **bold** for key terms and \`code\` for specific values/standards/protocols. Keep total length under 400 words.`;
+}
+
+async function deepDive() {
+  if (isGrading) return;  // share the grading lock — one Ollama call at a time
+  if (activeDeck.length === 0) return;
+  const card = cards[activeDeck[currentIdx]];
+
+  isGrading = true;
+  const btn = document.getElementById('btn-deep-dive');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Thinking…';
+
+  // Loading placeholder
+  const container = document.getElementById('deep-dive-container');
+  container.innerHTML = `
+    <div class="deep-dive-result">
+      <button class="dd-close" onclick="clearDeepDive()" title="Close">×</button>
+      <div class="dd-header">🔍 Deep Dive</div>
+      <div class="dd-body"><span class="spinner"></span> Loading expanded explanation from your local LLM… (first call may take 15-45s while the model loads)</div>
+    </div>
+  `;
+
+  try {
+    const prompt = buildDeepDivePrompt(card.q, card.a);
+    const raw = await callOllama(prompt, { format: null, temperature: 0.4 });
+    renderDeepDive(raw, card);
+    setOllamaStatus('ok', (resolvedModel || settings.model) + ' ready');
+  } catch (e) {
+    renderDeepDiveError(e.message);
+    setOllamaStatus('err', 'error: ' + (e.message || 'unknown'));
+  } finally {
+    isGrading = false;
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Deep Dive';
+  }
+}
+
+function renderDeepDive(raw, card) {
+  const container = document.getElementById('deep-dive-container');
+  const bodyHtml = renderMarkdownLite(String(raw || '').trim());
+  container.innerHTML = `
+    <div class="deep-dive-result">
+      <button class="dd-close" onclick="clearDeepDive()" title="Close">×</button>
+      <div class="dd-header">🔍 Deep Dive · ${escapeHtml(card.q)}</div>
+      <div class="dd-body">${bodyHtml}</div>
+    </div>
+  `;
+  container.querySelector('.deep-dive-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderDeepDiveError(message) {
+  const container = document.getElementById('deep-dive-container');
+  container.innerHTML = `
+    <div class="deep-dive-result error">
+      <button class="dd-close" onclick="clearDeepDive()" title="Close">×</button>
+      <div class="dd-header">⚠ Deep Dive unavailable</div>
+      <div class="dd-body">${escapeHtml(message)}\n\nOpen ⚙ Settings to verify your Ollama endpoint and model.</div>
+    </div>
+  `;
+}
+
+function clearDeepDive() {
+  const container = document.getElementById('deep-dive-container');
+  if (container) container.innerHTML = '';
+}
+
+// Minimal Markdown renderer — handles ## / ### headers, **bold**, `code`, and - lists.
+// Escapes HTML first so it's safe.
+function renderMarkdownLite(text) {
+  let html = escapeHtml(text);
+  // Headers (## must come before ### check; do specific first)
+  html = html.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^###\s+(.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^##\s+(.+)$/gm, '<h3>$1</h3>');
+  // Bold
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  // Inline code
+  html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  // Lists: lines starting with -, *, or a numbered item become <li>
+  html = html.replace(/^[ \t]*[-*][ \t]+(.+)$/gm, '<li>$1</li>');
+  html = html.replace(/^[ \t]*\d+\.[ \t]+(.+)$/gm, '<li>$1</li>');
+  // Wrap consecutive <li> in <ul>
+  html = html.replace(/((?:<li>[\s\S]*?<\/li>\s*)+)/g, '<ul>$1</ul>');
+  return html;
+}
+
+// ============================================================
+// SETTINGS MODAL
+// ============================================================
+function openSettings() {
+  document.getElementById('ollama-endpoint').value = settings.endpoint;
+  document.getElementById('ollama-model').value = settings.model;
+  document.getElementById('test-result').className = 'test-result';
+  document.getElementById('settings-modal').classList.add('show');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('show');
+}
+function saveSettings() {
+  const endpoint = document.getElementById('ollama-endpoint').value.trim() || 'http://localhost:11434';
+  const model = document.getElementById('ollama-model').value.trim() || 'llama3.1';
+  settings = { endpoint, model };
+  saveSettingsToStorage();
+  closeSettings();
+  // Re-check connection with new settings
+  checkOllamaConnection();
+}
+async function testOllamaConnection() {
+  // Temporarily apply form values to test what the user typed (without saving yet)
+  const endpoint = document.getElementById('ollama-endpoint').value.trim() || 'http://localhost:11434';
+  const model = document.getElementById('ollama-model').value.trim() || 'llama3.1';
+  const saved = { ...settings };
+  settings = { endpoint, model };
+  showTestResult('ok', 'Testing…');
+  document.getElementById('test-result').className = 'test-result show';
+  document.getElementById('test-result').textContent = 'Testing…';
+  await checkOllamaConnection(true);
+  settings = saved;  // restore until user clicks Save
+}
+
+// ============================================================
+// EVENT WIRING
+// ============================================================
+document.getElementById('section-filter').addEventListener('change', rebuildDeck);
+document.getElementById('btn-shuffle').addEventListener('click', () => { isShuffled = true; rebuildDeck(); });
+document.getElementById('btn-sequential').addEventListener('click', () => { isShuffled = false; rebuildDeck(); });
+document.getElementById('only-need').addEventListener('change', () => {
+  if (document.getElementById('only-need').checked) {
+    document.getElementById('hide-known').checked = false;
+  }
+  rebuildDeck();
+});
+document.getElementById('hide-known').addEventListener('change', () => {
+  if (document.getElementById('hide-known').checked) {
+    document.getElementById('only-need').checked = false;
+  }
+  rebuildDeck();
+});
+document.getElementById('btn-reset').addEventListener('click', resetProgress);
+document.getElementById('btn-settings').addEventListener('click', openSettings);
+document.getElementById('settings-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'settings-modal') closeSettings();
+});
+
+document.querySelectorAll('#mode-toggle button').forEach(b => {
+  b.addEventListener('click', () => switchMode(b.dataset.mode));
+});
+
+document.addEventListener('keydown', (e) => {
+  // Settings modal: Esc closes it
+  if (document.getElementById('settings-modal').classList.contains('show')) {
+    if (e.key === 'Escape') closeSettings();
+    return;
+  }
+
+  // Type mode keyboard handling — textarea is focused often
+  const inTextarea = document.activeElement.id === 'user-answer';
+  if (inTextarea) {
+    // Ctrl+Enter (or Cmd+Enter) = grade
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      gradeAnswer();
+      return;
+    }
+    // Esc clears the textarea + grade result
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      clearAnswer();
+      return;
+    }
+    // Don't intercept other keys while typing
+    return;
+  }
+
+  // Ignore if typing in any other form element
+  if (['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+  switch (e.key.toLowerCase()) {
+    case ' ':
+      e.preventDefault();
+      flipCard();
+      break;
+    case 'arrowright':
+    case 'n':
+      nextCard();
+      break;
+    case 'arrowleft':
+    case 'p':
+      prevCard();
+      break;
+    case 'k':
+      markCard('known');
+      break;
+    case 'u':
+      markCard('need');
+      break;
+    case 's':
+      isShuffled = true;
+      rebuildDeck();
+      break;
+    case 'f':
+      if (mode === 'flip') flipCard();
+      break;
+    case 't':
+      switchMode(mode === 'flip' ? 'type' : 'flip');
+      break;
+    case 'd':
+      deepDive();
+      break;
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+rebuildDeck();
+</script>
+</body>
+</html>
